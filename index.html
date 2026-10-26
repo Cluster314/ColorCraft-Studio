@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ColorCraft Studio - Additive RGB Light Lab</title>
+    <title>ColorCraft Studio - Artist's Palette & Painting Studio</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-    
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -24,45 +24,45 @@
             }
         }
     </script>
-    
+
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             user-select: none;
             -webkit-user-select: none;
         }
-        
-        .flask-glass {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
-            backdrop-filter: blur(10px);
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 0 20px rgba(255, 255, 255, 0.1);
+
+        /* Wooden/Studio Palette Texture & Depth */
+        .palette-board {
+            background: radial-gradient(circle at 30% 30%, #2a201b 0%, #19120e 100%);
+            border: 4px solid #3d2f26;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), inset 0 2px 10px rgba(255, 255, 255, 0.05);
         }
 
-        /* Drip drop animation */
-        @keyframes dropFall {
-            0% {
-                transform: translateY(0) scaleX(0.8) scaleY(1.2);
-                opacity: 1;
-            }
-            70% {
-                transform: translateY(180px) scaleX(0.9) scaleY(1.1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(220px) scale(0.2);
-                opacity: 0;
-            }
+        .paint-blob {
+            box-shadow: inset -3px -3px 8px rgba(0,0,0,0.4), inset 3px 3px 8px rgba(255,255,255,0.4), 0 6px 14px rgba(0,0,0,0.5);
         }
 
-        .animated-drop {
+        /* Swirl Ripple Ring */
+        @keyframes swirlExpand {
+            0% { transform: scale(0.2); opacity: 0.9; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+
+        .swirl-ring {
             position: absolute;
-            width: 18px;
-            height: 24px;
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            animation: dropFall 0.45s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
-            z-index: 30;
-            box-shadow: 0 0 12px currentColor;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.6);
+            pointer-events: none;
+            animation: swirlExpand 0.6s ease-out forwards;
+        }
+
+        /* Canvas Easel Frame Styling */
+        .easel-frame {
+            background: #14100d;
+            border: 12px solid #2b1d14;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 25px 50px -12px rgba(0,0,0,0.8);
+            border-radius: 12px;
         }
 
         /* Custom Scrollbar */
@@ -80,53 +80,61 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(156, 163, 175, 0.5);
         }
+
+        .color-dab-active {
+            ring: 3px solid #6366f1;
+            transform: scale(1.1);
+        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden">
 
     <!-- Header Navigation -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+    <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-500 via-green-500 to-blue-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <i class="fa-solid fa-flask-vial text-slate-950 text-xl font-black"></i>
+                    <i class="fa-solid fa-palette text-slate-950 text-xl font-black"></i>
                 </div>
                 <div>
                     <h1 class="text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-red-400 via-green-300 to-blue-400">
                         ColorCraft Studio
                     </h1>
-                    <p class="text-xs text-slate-400 font-medium">Additive RGB Light Laboratory</p>
+                    <p class="text-xs text-slate-400 font-medium">Palette Mixer & Painting Studio</p>
                 </div>
             </div>
 
             <div class="flex items-center gap-2">
+                <button onclick="openGalleryModal()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/30">
+                    <i class="fa-solid fa-images"></i> Artwork Gallery (<span id="galleryCountBadge">0</span>)
+                </button>
                 <button onclick="toggleAudio()" id="soundToggleBtn" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-all" title="Toggle Sound">
                     <i id="soundIcon" class="fa-solid fa-volume-high"></i>
                 </button>
-                <button onclick="resetAllLocalStorage()" class="px-3 py-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5" title="Reset All Saved Data">
+                <button onclick="resetAllLocalStorage()" class="px-3 py-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5" title="Reset All Studio Data">
                     <i class="fa-solid fa-trash-can"></i> Reset Storage
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Workspace -->
+    <!-- Main Studio Workspace -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- LEFT PANEL: Primary Palette Droppers (4 Cols) -->
+        <!-- LEFT PANEL: COLOR MIXING PALETTE WELL (4 Cols) -->
         <section class="lg:col-span-4 flex flex-col gap-5">
             
-            <!-- Exact 3 Primary RGB Light Palette -->
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-2xl backdrop-blur-md flex-1 flex flex-col">
-                <div class="flex justify-between items-center mb-4">
+            <!-- Mixing Well & Dispenser -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-2xl backdrop-blur-md flex flex-col gap-4">
+                <div class="flex justify-between items-center">
                     <div>
                         <h2 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-                            <i class="fa-solid fa-droplet text-indigo-400"></i> RGB Primary Palette
+                            <i class="fa-solid fa-vial text-indigo-400"></i> Mixing Palette Well
                         </h2>
-                        <p class="text-[11px] text-slate-400">Add pure light drops into the vessel</p>
+                        <p class="text-[11px] text-slate-400">Squeeze RGB drops & blend custom colors</p>
                     </div>
-                    <div class="flex items-center gap-1.5 bg-slate-950/80 px-2.5 py-1 rounded-lg border border-slate-800">
-                        <span class="text-[11px] text-slate-400">Drop Step:</span>
+                    <div class="flex items-center gap-1.5 bg-slate-950/80 px-2 py-1 rounded-lg border border-slate-800">
+                        <span class="text-[11px] text-slate-400">Drops:</span>
                         <select id="dropStepSelect" class="bg-transparent text-xs font-bold text-indigo-400 focus:outline-none cursor-pointer">
                             <option value="1">1 Drop</option>
                             <option value="2">2 Drops</option>
@@ -135,144 +143,120 @@
                     </div>
                 </div>
 
-                <!-- Red, Green, Blue Palette Buttons -->
-                <div class="grid grid-cols-3 gap-3 my-auto">
-                    <!-- Red Dropper -->
-                    <button onclick="addRgbDrop('red')" class="group relative flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-950/80 border border-red-500/40 hover:border-red-500 hover:bg-red-500/10 active:scale-95 transition-all shadow-lg shadow-red-950/40">
-                        <div class="w-12 h-12 rounded-full bg-red-600 shadow-lg shadow-red-600/50 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
-                            <i class="fa-solid fa-droplet text-base opacity-90"></i>
+                <!-- Primary RGB Wells (Red, Green, Blue ONLY) -->
+                <div class="grid grid-cols-3 gap-2.5">
+                    <!-- Red Tube -->
+                    <button onclick="addRgbDrop('red')" class="group relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-950/80 border border-red-500/40 hover:border-red-500 hover:bg-red-500/10 active:scale-95 transition-all shadow-md">
+                        <div class="w-10 h-10 rounded-full bg-red-600 paint-blob border-2 border-red-400 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
+                            <i class="fa-solid fa-droplet text-xs"></i>
                         </div>
-                        <span class="text-xs font-extrabold text-red-400 mt-2.5">RED</span>
-                        <span class="text-[10px] font-mono text-slate-500">#FF0000</span>
+                        <span class="text-xs font-extrabold text-red-400 mt-2">RED</span>
+                        <span class="text-[10px] font-mono text-slate-500">+Red Drop</span>
                     </button>
 
-                    <!-- Green Dropper -->
-                    <button onclick="addRgbDrop('green')" class="group relative flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-950/80 border border-emerald-500/40 hover:border-emerald-500 hover:bg-emerald-500/10 active:scale-95 transition-all shadow-lg shadow-emerald-950/40">
-                        <div class="w-12 h-12 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
-                            <i class="fa-solid fa-droplet text-base opacity-90"></i>
+                    <!-- Green Tube -->
+                    <button onclick="addRgbDrop('green')" class="group relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-950/80 border border-emerald-500/40 hover:border-emerald-500 hover:bg-emerald-500/10 active:scale-95 transition-all shadow-md">
+                        <div class="w-10 h-10 rounded-full bg-emerald-500 paint-blob border-2 border-emerald-300 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
+                            <i class="fa-solid fa-droplet text-xs"></i>
                         </div>
-                        <span class="text-xs font-extrabold text-emerald-400 mt-2.5">GREEN</span>
-                        <span class="text-[10px] font-mono text-slate-500">#00FF00</span>
+                        <span class="text-xs font-extrabold text-emerald-400 mt-2">GREEN</span>
+                        <span class="text-[10px] font-mono text-slate-500">+Green Drop</span>
                     </button>
 
-                    <!-- Blue Dropper -->
-                    <button onclick="addRgbDrop('blue')" class="group relative flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-950/80 border border-blue-500/40 hover:border-blue-500 hover:bg-blue-500/10 active:scale-95 transition-all shadow-lg shadow-blue-950/40">
-                        <div class="w-12 h-12 rounded-full bg-blue-600 shadow-lg shadow-blue-600/50 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
-                            <i class="fa-solid fa-droplet text-base opacity-90"></i>
+                    <!-- Blue Tube -->
+                    <button onclick="addRgbDrop('blue')" class="group relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-950/80 border border-blue-500/40 hover:border-blue-500 hover:bg-blue-500/10 active:scale-95 transition-all shadow-md">
+                        <div class="w-10 h-10 rounded-full bg-blue-600 paint-blob border-2 border-blue-400 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
+                            <i class="fa-solid fa-droplet text-xs"></i>
                         </div>
-                        <span class="text-xs font-extrabold text-blue-400 mt-2.5">BLUE</span>
-                        <span class="text-[10px] font-mono text-slate-500">#0000FF</span>
+                        <span class="text-xs font-extrabold text-blue-400 mt-2">BLUE</span>
+                        <span class="text-[10px] font-mono text-slate-500">+Blue Drop</span>
                     </button>
                 </div>
 
-                <!-- Recipe Quick Guide Shortcuts -->
-                <div class="mt-4 pt-4 border-t border-slate-800">
-                    <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
-                        <i class="fa-solid fa-wand-magic-sparkles text-amber-400 mr-1"></i> Quick Mixing Guides
-                    </h3>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <button onclick="applyPresetRatio(1, 1, 0)" class="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-left transition-all">
-                            <span class="font-bold text-amber-300 block">1 Red + 1 Green</span>
-                            <span class="text-[10px] text-slate-400">Pure Yellow (#FFFF00)</span>
-                        </button>
-                        <button onclick="applyPresetRatio(2, 1, 0)" class="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-left transition-all">
-                            <span class="font-bold text-orange-400 block">2 Red + 1 Green</span>
-                            <span class="text-[10px] text-slate-400">Vibrant Orange (#FF7F00)</span>
-                        </button>
-                        <button onclick="applyPresetRatio(1, 0, 1)" class="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-left transition-all">
-                            <span class="font-bold text-fuchsia-400 block">1 Red + 1 Blue</span>
-                            <span class="text-[10px] text-slate-400">Hot Magenta (#FF00FF)</span>
-                        </button>
-                        <button onclick="applyPresetRatio(1, 1, 1)" class="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-left transition-all">
-                            <span class="font-bold text-slate-100 block">1 Red + 1 Green + 1 Blue</span>
-                            <span class="text-[10px] text-slate-400">Pure White (#FFFFFF)</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- CENTER PANEL: Interactive Flask & Liquid Visualizer (5 Cols) -->
-        <section class="lg:col-span-5 flex flex-col gap-5">
-            
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-2xl backdrop-blur-md flex-1 flex flex-col items-center justify-between relative overflow-hidden min-h-[460px]">
-                
-                <!-- Vessel Top Actions -->
-                <div class="w-full flex justify-between items-center z-10">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                        <i class="fa-solid fa-vial text-indigo-400 mr-1"></i> Active Light Flask
-                    </span>
-
-                    <button onclick="emptyFlask()" class="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-rotate-left"></i> Empty Flask
-                    </button>
-                </div>
-
-                <!-- Animated Drop Spout Anchor -->
-                <div id="dropSpout" class="relative w-full flex justify-center items-center h-8 z-20">
-                    <!-- Spouted drops animate here -->
-                </div>
-
-                <!-- Chemistry Glass Beaker -->
-                <div class="relative flex items-end justify-center my-auto z-10">
-                    <div id="vesselGraphic" class="relative w-56 h-64 flask-glass rounded-b-full rounded-t-3xl overflow-hidden flex flex-col justify-end transition-all duration-300">
-                        <!-- Fluid Liquid Canvas -->
-                        <canvas id="liquidCanvas" class="w-full h-full block relative z-10"></canvas>
-                    </div>
-
-                    <!-- Volume Graduation Lines -->
-                    <div class="absolute -right-10 bottom-6 flex flex-col justify-between h-48 text-[10px] font-mono text-slate-600 select-none">
-                        <span>40d -</span>
-                        <span>30d -</span>
-                        <span>20d -</span>
-                        <span>10d -</span>
-                        <span>0d -</span>
+                <!-- Palette Board Visualizer -->
+                <div class="relative w-full flex items-center justify-center py-2">
+                    <div id="paletteBoard" class="relative w-56 h-56 rounded-full palette-board p-3 flex items-center justify-center overflow-hidden">
+                        <div class="absolute top-4 right-5 w-7 h-10 rounded-full bg-slate-950 border-2 border-amber-900/50 shadow-inner z-20 pointer-events-none"></div>
+                        <canvas id="paletteCanvas" class="w-full h-full rounded-full z-10 cursor-pointer" title="Click to swirl mix"></canvas>
+                        <div id="swirlOverlay" class="absolute inset-0 pointer-events-none z-20 flex items-center justify-center"></div>
                     </div>
                 </div>
 
-                <!-- Live Color Result Dashboard Card -->
-                <div class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-4 z-10 backdrop-blur-md">
-                    <div class="flex items-center justify-between mb-3">
+                <!-- Live Result Dashboard Card -->
+                <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-3.5">
+                    <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center gap-3">
-                            <div id="resultColorSwatch" class="w-10 h-10 rounded-xl border-2 border-white/20 shadow-lg bg-black transition-all"></div>
+                            <div id="resultColorSwatch" class="w-9 h-9 rounded-xl border-2 border-white/20 shadow-lg bg-black transition-all"></div>
                             <div>
-                                <h3 id="resultColorName" class="text-base font-extrabold text-white">Darkness</h3>
-                                <div class="flex items-center gap-2 text-xs font-mono">
+                                <h3 id="resultColorName" class="text-sm font-extrabold text-white">Darkness</h3>
+                                <div class="flex items-center gap-2 text-[11px] font-mono">
                                     <span id="resultColorHex" class="text-indigo-400 font-bold">#000000</span>
-                                    <span id="resultColorHsl" class="text-slate-500">hsl(0, 0%, 0%)</span>
                                 </div>
                             </div>
                         </div>
-
-                        <button onclick="saveColorToShelf()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-all shadow-lg flex items-center gap-1.5">
-                            <i class="fa-solid fa-bookmark"></i> Save Color
-                        </button>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="swirlPalette()" class="p-2 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 rounded-lg text-xs font-bold transition-all" title="Swirl Mix">
+                                <i class="fa-solid fa-wind"></i>
+                            </button>
+                            <button onclick="cleanPalette()" class="p-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 rounded-lg text-xs font-bold transition-all" title="Wipe Palette">
+                                <i class="fa-solid fa-soap"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- RGB Channel Breakdown Sliders/Meters -->
-                    <div class="space-y-1.5 text-xs font-mono">
+                    <!-- Drop Breakdown Meters -->
+                    <div class="space-y-1 text-[11px] font-mono">
                         <div class="flex items-center gap-2">
                             <span class="w-3 text-red-400 font-bold">R</span>
-                            <div class="flex-1 bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="flex-1 bg-slate-800 h-1.5 rounded-full overflow-hidden">
                                 <div id="redBar" class="bg-red-500 h-full w-0 transition-all duration-300"></div>
                             </div>
-                            <span id="redVal" class="w-12 text-right text-slate-300">0 (0d)</span>
+                            <span id="redVal" class="w-10 text-right text-slate-400">0d</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="w-3 text-emerald-400 font-bold">G</span>
-                            <div class="flex-1 bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="flex-1 bg-slate-800 h-1.5 rounded-full overflow-hidden">
                                 <div id="greenBar" class="bg-emerald-500 h-full w-0 transition-all duration-300"></div>
                             </div>
-                            <span id="greenVal" class="w-12 text-right text-slate-300">0 (0d)</span>
+                            <span id="greenVal" class="w-10 text-right text-slate-400">0d</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="w-3 text-blue-400 font-bold">B</span>
-                            <div class="flex-1 bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="flex-1 bg-slate-800 h-1.5 rounded-full overflow-hidden">
                                 <div id="blueBar" class="bg-blue-500 h-full w-0 transition-all duration-300"></div>
                             </div>
-                            <span id="blueVal" class="w-12 text-right text-slate-300">0 (0d)</span>
+                            <span id="blueVal" class="w-10 text-right text-slate-400">0d</span>
                         </div>
+                    </div>
+
+                    <!-- Add Color to Paint Tray Button -->
+                    <button onclick="saveColorToPaintTray()" class="w-full mt-3 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-xl text-xs transition-all shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-sm"></i> Save Color to Paint Tray
+                    </button>
+                </div>
+
+                <!-- Quick Recipe Shortcuts -->
+                <div class="pt-2">
+                    <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-400 mr-1"></i> RGB Mixing Recipes
+                    </h3>
+                    <div class="grid grid-cols-2 gap-1.5 text-xs">
+                        <button onclick="applyPresetRatio(1, 1, 0)" class="p-1.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-left transition-all">
+                            <span class="font-bold text-amber-300 block text-[11px]">1 Red + 1 Green</span>
+                            <span class="text-[9px] text-slate-400">Pure Yellow</span>
+                        </button>
+                        <button onclick="applyPresetRatio(2, 1, 0)" class="p-1.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-left transition-all">
+                            <span class="font-bold text-orange-400 block text-[11px]">2 Red + 1 Green</span>
+                            <span class="text-[9px] text-slate-400">Flame Orange</span>
+                        </button>
+                        <button onclick="applyPresetRatio(1, 0, 1)" class="p-1.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-left transition-all">
+                            <span class="font-bold text-fuchsia-400 block text-[11px]">1 Red + 1 Blue</span>
+                            <span class="text-[9px] text-slate-400">Hot Magenta</span>
+                        </button>
+                        <button onclick="applyPresetRatio(1, 1, 1)" class="p-1.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-left transition-all">
+                            <span class="font-bold text-slate-100 block text-[11px]">1 Red + 1 Green + 1 Blue</span>
+                            <span class="text-[9px] text-slate-400">Solar White</span>
+                        </button>
                     </div>
                 </div>
 
@@ -280,70 +264,168 @@
 
         </section>
 
-        <!-- RIGHT PANEL: Saved Shelf & Discoveries (3 Cols) -->
-        <section class="lg:col-span-3 flex flex-col gap-5">
+        <!-- CENTER & RIGHT PANEL: PAINTING STUDIO & CANVAS (8 Cols) -->
+        <section class="lg:col-span-8 flex flex-col gap-4">
             
-            <!-- Saved Color Bookshelf -->
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-2xl backdrop-blur-md flex-1 flex flex-col">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                        <i class="fa-solid fa-box-archive text-indigo-400"></i> Saved Color Shelf
-                    </h3>
-                    <span id="savedCount" class="text-xs font-mono text-indigo-400 font-bold">0 Saved</span>
+            <!-- Custom Paint Tray Toolbar (ONLY MIXED COLORS CAN BE USED TO PAINT) -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-xl backdrop-blur-md">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                        <i class="fa-solid fa-paint-brush text-indigo-400"></i> Active Custom Paint Tray
+                        <span class="text-[10px] font-normal text-slate-400">(Only mixed colors stored here can paint)</span>
+                    </h2>
+                    <span id="trayCountText" class="text-[11px] font-mono text-indigo-400 font-bold">3 Paints</span>
                 </div>
 
-                <div id="savedShelfList" class="space-y-2 overflow-y-auto max-h-[220px] pr-1 flex-1">
-                    <!-- Saved shelf cards render here dynamically -->
+                <!-- Paint Color Swatches Container -->
+                <div id="paintTrayContainer" class="flex items-center gap-2.5 overflow-x-auto pb-1 pt-1">
+                    <!-- Swatches render dynamically -->
                 </div>
             </div>
 
-            <!-- Discovery Recipes Achievements -->
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-2xl backdrop-blur-md flex-1 flex flex-col">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                        <i class="fa-solid fa-trophy text-amber-400"></i> RGB Discoveries
-                    </h3>
-                    <span id="discoveryProgress" class="text-xs font-mono text-amber-400 font-bold">0 / 6</span>
+            <!-- Painting Canvas Easel Workspace -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-2xl backdrop-blur-md flex-1 flex flex-col">
+                
+                <!-- Brush & Canvas Controls Toolbar -->
+                <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-800 text-xs">
+                    
+                    <!-- Brush Tools -->
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-slate-400 font-bold">Tool:</span>
+                        <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 gap-1">
+                            <button onclick="setBrushType('round')" id="tool-round" class="px-2.5 py-1 rounded-lg font-bold bg-indigo-600 text-white transition-all" title="Soft Round Brush">
+                                <i class="fa-solid fa-circle text-[10px] mr-1"></i> Soft
+                            </button>
+                            <button onclick="setBrushType('hard')" id="tool-hard" class="px-2.5 py-1 rounded-lg font-bold hover:bg-slate-800 text-slate-400 transition-all" title="Hard Round Brush">
+                                <i class="fa-solid fa-circle-dot text-[10px] mr-1"></i> Hard
+                            </button>
+                            <button onclick="setBrushType('spray')" id="tool-spray" class="px-2.5 py-1 rounded-lg font-bold hover:bg-slate-800 text-slate-400 transition-all" title="Spray / Airbrush">
+                                <i class="fa-solid fa-spray-can text-[10px] mr-1"></i> Spray
+                            </button>
+                            <button onclick="setBrushType('calligraphy')" id="tool-calligraphy" class="px-2.5 py-1 rounded-lg font-bold hover:bg-slate-800 text-slate-400 transition-all" title="Calligraphy Brush">
+                                <i class="fa-solid fa-pen-nib text-[10px] mr-1"></i> Callig.
+                            </button>
+                            <button onclick="setBrushType('eraser')" id="tool-eraser" class="px-2.5 py-1 rounded-lg font-bold hover:bg-slate-800 text-slate-400 transition-all" title="Eraser Tool">
+                                <i class="fa-solid fa-eraser text-[10px] mr-1"></i> Eraser
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sliders: Size & Opacity -->
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-slate-400 font-bold">Size:</span>
+                            <input type="range" id="brushSize" min="2" max="60" value="12" oninput="updateBrushSizeLabel()" class="w-20 accent-indigo-500 cursor-pointer">
+                            <span id="brushSizeVal" class="w-6 font-mono text-indigo-400 font-bold">12px</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-slate-400 font-bold">Opacity:</span>
+                            <input type="range" id="brushOpacity" min="10" max="100" value="100" oninput="updateBrushOpacityLabel()" class="w-20 accent-indigo-500 cursor-pointer">
+                            <span id="brushOpacityVal" class="w-8 font-mono text-indigo-400 font-bold">100%</span>
+                        </div>
+                    </div>
+
+                    <!-- History & Actions -->
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="undoCanvas()" class="p-2 bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-xl transition-all" title="Undo Stroke">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
+                        <button onclick="redoCanvas()" class="p-2 bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-xl transition-all" title="Redo Stroke">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                        <button onclick="clearCanvas()" class="p-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 rounded-xl transition-all" title="Clear Canvas">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+
                 </div>
 
-                <div id="discoveryList" class="space-y-2 overflow-y-auto max-h-[200px] pr-1 flex-1">
-                    <!-- Achievements render here dynamically -->
+                <!-- Painting HTML5 Canvas Easel Frame -->
+                <div class="flex-1 easel-frame p-2 relative flex items-center justify-center min-h-[380px] sm:min-h-[460px]">
+                    <canvas id="paintingCanvas" class="w-full h-full bg-slate-950 rounded cursor-crosshair touch-none"></canvas>
                 </div>
+
+                <!-- Canvas Bottom Actions (Save Artwork to Gallery & PNG Download) -->
+                <div class="flex flex-wrap items-center justify-between gap-3 mt-3 pt-3 border-t border-slate-800">
+                    <div class="flex items-center gap-2 flex-1 max-w-md">
+                        <i class="fa-solid fa-heading text-slate-500"></i>
+                        <input type="text" id="artworkTitleInput" placeholder="Artwork Title (e.g., Sunset Horizon)..." class="bg-slate-950 border border-slate-800 text-xs rounded-xl px-3 py-2 w-full text-slate-200 focus:outline-none focus:border-indigo-500">
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button onclick="downloadArtworkPNG()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold rounded-xl text-xs transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-download text-indigo-400"></i> Download PNG
+                        </button>
+                        <button onclick="savePaintingToGallery()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition-all shadow-lg shadow-emerald-600/30 flex items-center gap-1.5">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Artwork to Gallery
+                        </button>
+                    </div>
+                </div>
+
             </div>
 
         </section>
 
     </main>
 
+    <!-- ARTWORK GALLERY MODAL -->
+    <div id="galleryModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+            
+            <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-images text-indigo-400 text-lg"></i>
+                    <h2 class="text-base font-bold text-slate-100">Saved Artwork Studio Gallery</h2>
+                </div>
+                <button onclick="closeGalleryModal()" class="w-8 h-8 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Gallery Grid Container -->
+            <div id="galleryGrid" class="p-6 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Saved painting cards render here -->
+            </div>
+
+        </div>
+    </div>
+
     <!-- JavaScript Application Engine -->
     <script>
-        // --- LOCAL STORAGE KEYS ---
-        const STORAGE_FLASK_KEY = 'colorcraft_flask_state_v2';
-        const STORAGE_SHELF_KEY = 'colorcraft_saved_shelf_v2';
-        const STORAGE_DISCOVERIES_KEY = 'colorcraft_discoveries_v2';
+        // --- STORAGE KEYS ---
+        const STORAGE_WELL_KEY = 'colorcraft_well_state_v4';
+        const STORAGE_TRAY_KEY = 'colorcraft_tray_state_v4';
+        const STORAGE_GALLERY_KEY = 'colorcraft_gallery_state_v4';
+        const STORAGE_CANVAS_KEY = 'colorcraft_canvas_state_v4';
 
-        // --- STATE ---
+        // --- PALETTE WELL STATE ---
         let redDrops = 0;
         let greenDrops = 0;
         let blueDrops = 0;
         let soundEnabled = true;
 
-        let savedShelf = [];
-        let unlockedDiscoveries = new Set();
-
-        // RGB Master Recipes Cookbook
-        const rgbDiscoveries = [
-            { id: 'yellow', name: 'Pure Yellow', redRatio: 1, greenRatio: 1, blueRatio: 0, hex: '#FFFF00', desc: 'Equal Red & Green Light' },
-            { id: 'orange', name: 'Flame Orange', redRatio: 2, greenRatio: 1, blueRatio: 0, hex: '#FF7F00', desc: '2 Red + 1 Green Light' },
-            { id: 'magenta', name: 'Hot Magenta', redRatio: 1, greenRatio: 0, blueRatio: 1, hex: '#FF00FF', desc: 'Equal Red & Blue Light' },
-            { id: 'cyan', name: 'Electric Cyan', redRatio: 0, greenRatio: 1, blueRatio: 1, hex: '#00FFFF', desc: 'Equal Green & Blue Light' },
-            { id: 'white', name: 'Solar White', redRatio: 1, greenRatio: 1, blueRatio: 1, hex: '#FFFFFF', desc: 'Equal Red + Green + Blue' },
-            { id: 'lime', name: 'Bright Lime Green', redRatio: 1, greenRatio: 2, blueRatio: 0, hex: '#7FFF00', desc: '1 Red + 2 Green Light' }
+        // --- PAINT TRAY STATE ---
+        let paintTray = [
+            { id: 1, name: 'Pure Red', hex: '#FF0000', r: 255, g: 0, b: 0 },
+            { id: 2, name: 'Pure Green', hex: '#00FF00', r: 0, g: 255, b: 0 },
+            { id: 3, name: 'Pure Blue', hex: '#0000FF', r: 0, g: 0, b: 255 }
         ];
+        let activePaintColor = paintTray[0];
 
-        // Color Names Database
+        // --- CANVAS & DRAWING STATE ---
+        let isDrawing = false;
+        let currentTool = 'round'; // round, hard, spray, calligraphy, eraser
+        let lastX = 0, lastY = 0;
+        let undoHistory = [];
+        let redoHistory = [];
+        const MAX_HISTORY = 20;
+
+        // --- GALLERY STATE ---
+        let savedGallery = [];
+
+        // Color Names DB
         const colorNamesDB = [
-            { name: "Darkness (Empty)", rgb: [0, 0, 0] },
+            { name: "Darkness", rgb: [0, 0, 0] },
             { name: "Pure Red", rgb: [255, 0, 0] },
             { name: "Pure Green", rgb: [0, 255, 0] },
             { name: "Pure Blue", rgb: [0, 0, 255] },
@@ -360,7 +442,7 @@
             { name: "Warm Amber", rgb: [255, 191, 0] }
         ];
 
-        // --- WEB AUDIO API ---
+        // --- WEB AUDIO API SYNTHESIZER ---
         let audioCtx = null;
 
         function initAudio() {
@@ -375,45 +457,58 @@
                 initAudio();
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                
-                const freqMap = { 'red': 400, 'green': 600, 'blue': 800 };
-                const baseFreq = freqMap[type] || 500;
+                const freqMap = { 'red': 360, 'green': 540, 'blue': 720 };
+                const baseFreq = freqMap[type] || 480;
 
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(baseFreq, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, audioCtx.currentTime + 0.08);
-                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.18);
+                osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.4, audioCtx.currentTime + 0.08);
+                osc.frequency.exponentialRampToValueAtTime(140, audioCtx.currentTime + 0.16);
 
-                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.18);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.16);
 
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-
                 osc.start();
-                osc.stop(audioCtx.currentTime + 0.18);
+                osc.stop(audioCtx.currentTime + 0.16);
             } catch (e) {}
         }
 
-        function playClearSound() {
+        function playSwirlSound() {
             if (!soundEnabled) return;
             try {
                 initAudio();
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(350, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.22);
-
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.22);
-
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(440, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-
                 osc.start();
-                osc.stop(audioCtx.currentTime + 0.22);
+                osc.stop(audioCtx.currentTime + 0.25);
+            } catch (e) {}
+        }
+
+        function playSaveSound() {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                osc.frequency.exponentialRampToValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
             } catch (e) {}
         }
 
@@ -423,91 +518,87 @@
             btn.className = soundEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark text-rose-400';
         }
 
-        // --- LOCAL STORAGE PERSISTENCE ENGINE ---
+        // --- LOCAL STORAGE SYSTEM ---
 
         function loadFromLocalStorage() {
-            // Load Flask State
             try {
-                const savedFlask = localStorage.getItem(STORAGE_FLASK_KEY);
-                if (savedFlask) {
-                    const parsed = JSON.parse(savedFlask);
+                const savedWell = localStorage.getItem(STORAGE_WELL_KEY);
+                if (savedWell) {
+                    const parsed = JSON.parse(savedWell);
                     redDrops = parsed.redDrops || 0;
                     greenDrops = parsed.greenDrops || 0;
                     blueDrops = parsed.blueDrops || 0;
                 }
-            } catch (e) { console.error('Error loading flask state:', e); }
+            } catch (e) {}
 
-            // Load Saved Shelf
             try {
-                const savedShelfData = localStorage.getItem(STORAGE_SHELF_KEY);
-                if (savedShelfData) {
-                    savedShelf = JSON.parse(savedShelfData);
+                const savedTray = localStorage.getItem(STORAGE_TRAY_KEY);
+                if (savedTray) {
+                    paintTray = JSON.parse(savedTray);
+                    if (paintTray.length > 0) activePaintColor = paintTray[0];
                 }
-            } catch (e) { console.error('Error loading saved shelf:', e); }
+            } catch (e) {}
 
-            // Load Discoveries
             try {
-                const savedDisc = localStorage.getItem(STORAGE_DISCOVERIES_KEY);
-                if (savedDisc) {
-                    unlockedDiscoveries = new Set(JSON.parse(savedDisc));
+                const savedGal = localStorage.getItem(STORAGE_GALLERY_KEY);
+                if (savedGal) {
+                    savedGallery = JSON.parse(savedGal);
                 }
-            } catch (e) { console.error('Error loading discoveries:', e); }
+            } catch (e) {}
         }
 
         function saveToLocalStorage() {
-            // Save Flask State
-            localStorage.setItem(STORAGE_FLASK_KEY, JSON.stringify({
-                redDrops,
-                greenDrops,
-                blueDrops
-            }));
-
-            // Save Saved Shelf
-            localStorage.setItem(STORAGE_SHELF_KEY, JSON.stringify(savedShelf));
-
-            // Save Discoveries
-            localStorage.setItem(STORAGE_DISCOVERIES_KEY, JSON.stringify(Array.from(unlockedDiscoveries)));
+            localStorage.setItem(STORAGE_WELL_KEY, JSON.stringify({ redDrops, greenDrops, blueDrops }));
+            localStorage.setItem(STORAGE_TRAY_KEY, JSON.stringify(paintTray));
+            localStorage.setItem(STORAGE_GALLERY_KEY, JSON.stringify(savedGallery));
+            
+            // Save Canvas Work-in-Progress
+            const paintingCanvas = document.getElementById('paintingCanvas');
+            try {
+                localStorage.setItem(STORAGE_CANVAS_KEY, paintingCanvas.toDataURL());
+            } catch (e) {}
         }
 
         function resetAllLocalStorage() {
-            if (confirm("Reset all saved colors, discoveries, and empty the flask?")) {
-                localStorage.removeItem(STORAGE_FLASK_KEY);
-                localStorage.removeItem(STORAGE_SHELF_KEY);
-                localStorage.removeItem(STORAGE_DISCOVERIES_KEY);
-
+            if (confirm("Reset all custom mixed paints, saved gallery paintings, and canvas?")) {
+                localStorage.clear();
                 redDrops = 0;
                 greenDrops = 0;
                 blueDrops = 0;
-                savedShelf = [];
-                unlockedDiscoveries = new Set();
+                paintTray = [
+                    { id: 1, name: 'Pure Red', hex: '#FF0000', r: 255, g: 0, b: 0 },
+                    { id: 2, name: 'Pure Green', hex: '#00FF00', r: 0, g: 255, b: 0 },
+                    { id: 3, name: 'Pure Blue', hex: '#0000FF', r: 0, g: 0, b: 255 }
+                ];
+                activePaintColor = paintTray[0];
+                savedGallery = [];
+                undoHistory = [];
+                redoHistory = [];
 
-                playClearSound();
+                clearCanvasContext();
                 updateUI();
-                renderSavedShelf();
-                renderDiscoveries();
+                renderPaintTray();
+                renderGalleryGrid();
             }
         }
 
-        // --- ADDITIVE RGB LIGHT CALCULATIONS ---
+        // --- RGB ADDITIVE MIXING ENGINE ---
 
         function computeRgbLightColor() {
             const totalDrops = redDrops + greenDrops + blueDrops;
             if (totalDrops === 0) {
-                return { r: 0, g: 0, b: 0, hex: '#000000', hsl: 'hsl(0, 0%, 0%)', name: 'Darkness (Empty)' };
+                return { r: 0, g: 0, b: 0, hex: '#000000', name: 'Darkness' };
             }
 
-            // Proportional weighted average scaled by maximum light channel intensity
             const maxDrops = Math.max(redDrops, greenDrops, blueDrops);
-            
             const r = Math.round((redDrops / maxDrops) * 255);
             const g = Math.round((greenDrops / maxDrops) * 255);
             const b = Math.round((blueDrops / maxDrops) * 255);
 
             const hex = rgbToHex(r, g, b);
-            const hsl = rgbToHsl(r, g, b);
             const name = findClosestColorName(r, g, b);
 
-            return { r, g, b, hex, hsl, name };
+            return { r, g, b, hex, name };
         }
 
         function rgbToHex(r, g, b) {
@@ -517,28 +608,8 @@
             }).join('').toUpperCase();
         }
 
-        function rgbToHsl(r, g, b) {
-            r /= 255; g /= 255; b /= 255;
-            const max = Math.max(r, g, b), min = Math.min(r, g, b);
-            let h, s, l = (max + min) / 2;
-
-            if (max === min) {
-                h = s = 0;
-            } else {
-                const d = max - min;
-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch (max) {
-                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                    case g: h = (b - r) / d + 2; break;
-                    case b: h = (r - g) / d + 4; break;
-                }
-                h /= 6;
-            }
-            return `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`;
-        }
-
         function findClosestColorName(r, g, b) {
-            let closestName = "Custom Light Blend";
+            let closestName = "Mixed Hue";
             let minDistance = Infinity;
 
             colorNamesDB.forEach(item => {
@@ -556,21 +627,13 @@
             return closestName;
         }
 
-        // --- PALETTE ACTIONS ---
-
         function addRgbDrop(color) {
-            const stepSelect = document.getElementById('dropStepSelect');
-            const count = parseInt(stepSelect.value) || 1;
-
+            const count = parseInt(document.getElementById('dropStepSelect').value) || 1;
             if (color === 'red') redDrops += count;
             if (color === 'green') greenDrops += count;
             if (color === 'blue') blueDrops += count;
 
-            const hexColorMap = { 'red': '#FF0000', 'green': '#00FF00', 'blue': '#0000FF' };
-            spawnDropAnimation(hexColorMap[color]);
             playDropSound(color);
-
-            checkDiscoveryUnlocks();
             saveToLocalStorage();
             updateUI();
         }
@@ -579,226 +642,467 @@
             redDrops = r;
             greenDrops = g;
             blueDrops = b;
-
-            playDropSound('green');
-            checkDiscoveryUnlocks();
+            playSwirlSound();
             saveToLocalStorage();
             updateUI();
         }
 
-        function emptyFlask() {
-            playClearSound();
-            redDrops = 0;
-            greenDrops = 0;
-            blueDrops = 0;
-
+        function cleanPalette() {
+            redDrops = 0; greenDrops = 0; blueDrops = 0;
             saveToLocalStorage();
             updateUI();
         }
 
-        function spawnDropAnimation(colorHex) {
-            const spout = document.getElementById('dropSpout');
-            const drop = document.createElement('div');
-            drop.className = 'animated-drop';
-            drop.style.backgroundColor = colorHex;
-            drop.style.color = colorHex;
-            drop.style.left = `calc(50% - 9px)`;
-            spout.appendChild(drop);
-
-            setTimeout(() => {
-                if (drop.parentNode) drop.parentNode.removeChild(drop);
-            }, 500);
+        function swirlPalette() {
+            if (redDrops === 0 && greenDrops === 0 && blueDrops === 0) return;
+            playSwirlSound();
+            const overlay = document.getElementById('swirlOverlay');
+            const ring = document.createElement('div');
+            ring.className = 'swirl-ring w-28 h-28';
+            overlay.appendChild(ring);
+            setTimeout(() => ring.remove(), 600);
+            updateUI();
         }
 
-        // --- SAVED SHELF ACTIONS ---
+        // --- PALETTE CANVAS RENDERER ---
+        const paletteCanvas = document.getElementById('paletteCanvas');
+        const pCtx = paletteCanvas.getContext('2d');
 
-        function saveColorToShelf() {
+        function drawPaletteCanvas() {
+            const rect = paletteCanvas.getBoundingClientRect();
+            paletteCanvas.width = rect.width;
+            paletteCanvas.height = rect.height;
+
+            pCtx.clearRect(0, 0, paletteCanvas.width, paletteCanvas.height);
+
+            const totalDrops = redDrops + greenDrops + blueDrops;
+            if (totalDrops > 0) {
+                const computed = computeRgbLightColor();
+                const gradient = pCtx.createRadialGradient(
+                    paletteCanvas.width / 2, paletteCanvas.height / 2, 5,
+                    paletteCanvas.width / 2, paletteCanvas.height / 2, paletteCanvas.width / 2
+                );
+                gradient.addColorStop(0, `rgba(${computed.r}, ${computed.g}, ${computed.b}, 0.95)`);
+                gradient.addColorStop(0.7, `rgba(${computed.r}, ${computed.g}, ${computed.b}, 0.5)`);
+                gradient.addColorStop(1, 'rgba(0,0,0,0)');
+
+                pCtx.fillStyle = gradient;
+                pCtx.fillRect(0, 0, paletteCanvas.width, paletteCanvas.height);
+            }
+        }
+
+        // --- PAINT TRAY MANAGER (ONLY MIXED COLORS CAN PAINT) ---
+
+        function saveColorToPaintTray() {
             const current = computeRgbLightColor();
             if (redDrops === 0 && greenDrops === 0 && blueDrops === 0) return;
 
-            const newEntry = {
-                id: Date.now(),
-                name: current.name,
-                hex: current.hex,
-                rgbStr: `R:${current.r} G:${current.g} B:${current.b}`,
-                dropsStr: `${redDrops}R / ${greenDrops}G / ${blueDrops}B`,
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            };
-
-            savedShelf.unshift(newEntry);
-            saveToLocalStorage();
-            renderSavedShelf();
-        }
-
-        function deleteShelfItem(id) {
-            savedShelf = savedShelf.filter(item => item.id !== id);
-            saveToLocalStorage();
-            renderSavedShelf();
-        }
-
-        function renderSavedShelf() {
-            const list = document.getElementById('savedShelfList');
-            document.getElementById('savedCount').innerText = `${savedShelf.length} Saved`;
-
-            if (savedShelf.length === 0) {
-                list.innerHTML = `
-                    <div class="text-center py-8 text-slate-600 text-xs">
-                        <i class="fa-solid fa-bookmark text-2xl mb-2 block opacity-40"></i>
-                        No saved colors on your shelf yet.
-                    </div>`;
-                return;
+            // Avoid duplicate hex entries
+            if (!paintTray.some(p => p.hex === current.hex)) {
+                const newPaint = {
+                    id: Date.now(),
+                    name: current.name,
+                    hex: current.hex,
+                    r: current.r,
+                    g: current.g,
+                    b: current.b
+                };
+                paintTray.push(newPaint);
+                activePaintColor = newPaint;
+                playSaveSound();
+                saveToLocalStorage();
+                renderPaintTray();
             }
-
-            list.innerHTML = savedShelf.map(item => `
-                <div class="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 flex items-center justify-between text-xs transition-all hover:border-slate-700">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-6 h-6 rounded-lg border border-white/20 shadow-sm" style="background-color: ${item.hex}"></div>
-                        <div>
-                            <span class="font-bold text-slate-200 block">${item.name}</span>
-                            <span class="font-mono text-[10px] text-indigo-400">${item.hex} (${item.dropsStr})</span>
-                        </div>
-                    </div>
-                    <button onclick="deleteShelfItem(${item.id})" class="text-slate-500 hover:text-rose-400 p-1 transition-colors">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-            `).join('');
         }
 
-        // --- DISCOVERY UNLOCKS ---
-
-        function checkDiscoveryUnlocks() {
-            if (redDrops === 0 && greenDrops === 0 && blueDrops === 0) return;
-
-            rgbDiscoveries.forEach(disc => {
-                // Check exact drop proportion match
-                const matchYellow = disc.id === 'yellow' && redDrops > 0 && redDrops === greenDrops && blueDrops === 0;
-                const matchOrange = disc.id === 'orange' && redDrops > 0 && redDrops === greenDrops * 2 && blueDrops === 0;
-                const matchMagenta = disc.id === 'magenta' && redDrops > 0 && redDrops === blueDrops && greenDrops === 0;
-                const matchCyan = disc.id === 'cyan' && greenDrops > 0 && greenDrops === blueDrops && redDrops === 0;
-                const matchWhite = disc.id === 'white' && redDrops > 0 && redDrops === greenDrops && greenDrops === blueDrops;
-                const matchLime = disc.id === 'lime' && greenDrops > 0 && greenDrops === redDrops * 2 && blueDrops === 0;
-
-                if (matchYellow || matchOrange || matchMagenta || matchCyan || matchWhite || matchLime) {
-                    if (!unlockedDiscoveries.has(disc.id)) {
-                        unlockedDiscoveries.add(disc.id);
-                        saveToLocalStorage();
-                        renderDiscoveries();
-                    }
-                }
-            });
+        function selectPaintColor(id) {
+            const found = paintTray.find(p => p.id === id);
+            if (found) {
+                activePaintColor = found;
+                if (currentTool === 'eraser') setBrushType('round');
+                renderPaintTray();
+            }
         }
 
-        function renderDiscoveries() {
-            const list = document.getElementById('discoveryList');
-            document.getElementById('discoveryProgress').innerText = `${unlockedDiscoveries.size} / ${rgbDiscoveries.length}`;
+        function deletePaintColor(e, id) {
+            e.stopPropagation();
+            if (paintTray.length <= 1) return; // Keep at least 1 color
+            paintTray = paintTray.filter(p => p.id !== id);
+            if (activePaintColor.id === id) {
+                activePaintColor = paintTray[0];
+            }
+            saveToLocalStorage();
+            renderPaintTray();
+        }
 
-            list.innerHTML = rgbDiscoveries.map(disc => {
-                const isUnlocked = unlockedDiscoveries.has(disc.id);
+        function renderPaintTray() {
+            const container = document.getElementById('paintTrayContainer');
+            document.getElementById('trayCountText').innerText = `${paintTray.length} Paints`;
+
+            container.innerHTML = paintTray.map(p => {
+                const isActive = activePaintColor.id === p.id && currentTool !== 'eraser';
                 return `
-                    <div class="p-2 rounded-xl border transition-all ${isUnlocked ? 'bg-slate-950/90 border-amber-500/40 shadow-sm' : 'bg-slate-950/30 border-slate-900 opacity-50'}">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="w-3.5 h-3.5 rounded-full border border-white/20" style="background-color: ${isUnlocked ? disc.hex : '#334155'}"></span>
-                                <span class="font-bold text-xs ${isUnlocked ? 'text-slate-100' : 'text-slate-500'}">
-                                    ${isUnlocked ? disc.name : '??? Locked Discovery'}
-                                </span>
-                            </div>
-                            <i class="fa-solid ${isUnlocked ? 'fa-check text-emerald-400' : 'fa-lock text-slate-600'} text-xs"></i>
+                    <div onclick="selectPaintColor(${p.id})" class="group flex items-center gap-2 px-3 py-1.5 rounded-xl border cursor-pointer transition-all ${isActive ? 'bg-indigo-600/20 border-indigo-500 scale-105 shadow-md' : 'bg-slate-950/80 border-slate-800 hover:border-slate-700'} flex-shrink-0">
+                        <div class="w-6 h-6 rounded-full paint-blob border border-white/20" style="background-color: ${p.hex}"></div>
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-slate-200">${p.name}</span>
+                            <span class="text-[9px] font-mono text-slate-400">${p.hex}</span>
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-0.5">${disc.desc}</p>
+                        ${paintTray.length > 1 ? `
+                            <button onclick="deletePaintColor(event, ${p.id})" class="text-slate-500 hover:text-rose-400 text-xs ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        ` : ''}
                     </div>
                 `;
             }).join('');
         }
 
-        // --- CANVAS WAVE ANIMATION & UI RENDER ---
+        // --- PAINTING STUDIO CANVAS ENGINE ---
 
-        const canvas = document.getElementById('liquidCanvas');
+        const canvas = document.getElementById('paintingCanvas');
         const ctx = canvas.getContext('2d');
-        let waveOffset = 0;
 
         function resizeCanvas() {
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
+            const container = canvas.parentElement;
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.drawImage(canvas, 0, 0);
+
+            canvas.width = container.clientWidth - 16;
+            canvas.height = container.clientHeight - 16;
+
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(tempCanvas, 0, 0);
+
+            // Reload saved state if initial setup
+            const savedWip = localStorage.getItem(STORAGE_CANVAS_KEY);
+            if (savedWip && undoHistory.length === 0) {
+                const img = new Image();
+                img.onload = () => ctx.drawImage(img, 0, 0);
+                img.src = savedWip;
+            }
         }
 
-        window.addEventListener('resize', resizeCanvas);
+        function saveCanvasState() {
+            if (undoHistory.length >= MAX_HISTORY) undoHistory.shift();
+            undoHistory.push(canvas.toDataURL());
+            redoHistory = [];
+            saveToLocalStorage();
+        }
 
-        function animateLiquid() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function undoCanvas() {
+            if (undoHistory.length > 0) {
+                redoHistory.push(canvas.toDataURL());
+                const previousState = undoHistory.pop();
+                const img = new Image();
+                img.onload = () => {
+                    ctx.fillStyle = '#020617';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    saveToLocalStorage();
+                };
+                img.src = previousState;
+            }
+        }
 
-            const totalDrops = redDrops + greenDrops + blueDrops;
-            if (totalDrops > 0) {
-                const computed = computeRgbLightColor();
-                const fillColor = `rgb(${computed.r}, ${computed.g}, ${computed.b})`;
+        function redoCanvas() {
+            if (redoHistory.length > 0) {
+                undoHistory.push(canvas.toDataURL());
+                const nextState = redoHistory.pop();
+                const img = new Image();
+                img.onload = () => {
+                    ctx.fillStyle = '#020617';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    saveToLocalStorage();
+                };
+                img.src = nextState;
+            }
+        }
 
-                // Volume height calculation capped at 40 drops max height
-                const fillPercent = Math.min(1.0, totalDrops / 40);
-                const liquidHeight = canvas.height * (0.12 + fillPercent * 0.8);
-                const fillY = canvas.height - liquidHeight;
+        function clearCanvasContext() {
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
 
-                // Wave Fluid Top
-                ctx.fillStyle = fillColor;
-                ctx.beginPath();
-                ctx.moveTo(0, canvas.height);
+        function clearCanvas() {
+            if (confirm("Clear artwork canvas?")) {
+                saveCanvasState();
+                clearCanvasContext();
+                saveToLocalStorage();
+            }
+        }
 
-                waveOffset += 0.06;
-                for (let x = 0; x <= canvas.width; x += 5) {
-                    const y = fillY + Math.sin(x * 0.04 + waveOffset) * 3;
-                    ctx.lineTo(x, y);
+        function setBrushType(tool) {
+            currentTool = tool;
+            ['round', 'hard', 'spray', 'calligraphy', 'eraser'].forEach(t => {
+                const btn = document.getElementById(`tool-${t}`);
+                if (btn) {
+                    if (t === tool) {
+                        btn.className = 'px-2.5 py-1 rounded-lg font-bold bg-indigo-600 text-white transition-all';
+                    } else {
+                        btn.className = 'px-2.5 py-1 rounded-lg font-bold hover:bg-slate-800 text-slate-400 transition-all';
+                    }
                 }
+            });
+            renderPaintTray();
+        }
 
-                ctx.lineTo(canvas.width, canvas.height);
-                ctx.closePath();
-                ctx.fill();
+        function updateBrushSizeLabel() {
+            document.getElementById('brushSizeVal').innerText = `${document.getElementById('brushSize').value}px`;
+        }
 
-                // Glow/Light sheen highlight
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-                ctx.beginPath();
-                ctx.moveTo(0, fillY);
-                for (let x = 0; x <= canvas.width; x += 5) {
-                    const y = fillY + Math.sin(x * 0.04 + waveOffset) * 3;
-                    ctx.lineTo(x, y);
-                }
-                ctx.lineTo(canvas.width, fillY + 6);
-                ctx.lineTo(0, fillY + 6);
-                ctx.closePath();
-                ctx.fill();
+        function updateBrushOpacityLabel() {
+            document.getElementById('brushOpacityVal').innerText = `${document.getElementById('brushOpacity').value}%`;
+        }
+
+        function getCanvasCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
             }
 
-            requestAnimationFrame(animateLiquid);
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
         }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            saveCanvasState();
+            const coords = getCanvasCoordinates(e);
+            lastX = coords.x;
+            lastY = coords.y;
+            drawStroke(coords.x, coords.y);
+        }
+
+        function drawStroke(x, y) {
+            if (!isDrawing) return;
+
+            const size = parseInt(document.getElementById('brushSize').value);
+            const opacity = parseInt(document.getElementById('brushOpacity').value) / 100;
+
+            ctx.save();
+            ctx.globalAlpha = opacity;
+
+            if (currentTool === 'eraser') {
+                ctx.strokeStyle = '#020617';
+                ctx.fillStyle = '#020617';
+                ctx.lineWidth = size;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            } else if (currentTool === 'round') {
+                ctx.strokeStyle = activePaintColor.hex;
+                ctx.lineWidth = size;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.shadowColor = activePaintColor.hex;
+                ctx.shadowBlur = size * 0.3;
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            } else if (currentTool === 'hard') {
+                ctx.strokeStyle = activePaintColor.hex;
+                ctx.lineWidth = size;
+                ctx.lineCap = 'square';
+                ctx.lineJoin = 'miter';
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            } else if (currentTool === 'spray') {
+                ctx.fillStyle = activePaintColor.hex;
+                const density = Math.floor(size * 2);
+                for (let i = 0; i < density; i++) {
+                    const offsetAngle = Math.random() * Math.PI * 2;
+                    const offsetRadius = Math.random() * size;
+                    ctx.fillRect(
+                        x + Math.cos(offsetAngle) * offsetRadius,
+                        y + Math.sin(offsetAngle) * offsetRadius,
+                        1.5, 1.5
+                    );
+                }
+            } else if (currentTool === 'calligraphy') {
+                ctx.strokeStyle = activePaintColor.hex;
+                ctx.lineWidth = size;
+                ctx.beginPath();
+                ctx.moveTo(lastX - size * 0.5, lastY - size * 0.5);
+                ctx.lineTo(x + size * 0.5, y + size * 0.5);
+                ctx.stroke();
+            }
+
+            ctx.restore();
+            lastX = x;
+            lastY = y;
+        }
+
+        function stopDrawing() {
+            if (isDrawing) {
+                isDrawing = false;
+                saveToLocalStorage();
+            }
+        }
+
+        // Event Listeners for Painting Canvas
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', (e) => drawStroke(getCanvasCoordinates(e).x, getCanvasCoordinates(e).y));
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
+
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); const c = getCanvasCoordinates(e); drawStroke(c.x, c.y); });
+        canvas.addEventListener('touchend', stopDrawing);
+
+        // --- GALLERY & ARTWORK DOWNLOAD ENGINE ---
+
+        function savePaintingToGallery() {
+            const titleInput = document.getElementById('artworkTitleInput');
+            const title = titleInput.value.trim() || `Artwork #${savedGallery.length + 1}`;
+            
+            const dataUrl = canvas.toDataURL('image/png');
+            const newPainting = {
+                id: Date.now(),
+                title: title,
+                dataUrl: dataUrl,
+                date: new Date().toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }),
+                swatches: paintTray.map(p => p.hex)
+            };
+
+            savedGallery.unshift(newPainting);
+            playSaveSound();
+            saveToLocalStorage();
+            updateGalleryBadge();
+            titleInput.value = '';
+            alert(`"${title}" saved to your studio gallery!`);
+        }
+
+        function downloadArtworkPNG() {
+            const title = document.getElementById('artworkTitleInput').value.trim() || 'colorcraft-artwork';
+            const link = document.createElement('a');
+            link.download = `${title.toLowerCase().replace(/\s+/g, '-')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function openGalleryModal() {
+            renderGalleryGrid();
+            document.getElementById('galleryModal').classList.remove('hidden');
+        }
+
+        function closeGalleryModal() {
+            document.getElementById('galleryModal').classList.add('hidden');
+        }
+
+        function loadGalleryItem(id) {
+            const item = savedGallery.find(g => g.id === id);
+            if (item) {
+                saveCanvasState();
+                const img = new Image();
+                img.onload = () => {
+                    ctx.fillStyle = '#020617';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    saveToLocalStorage();
+                    closeGalleryModal();
+                };
+                img.src = item.dataUrl;
+            }
+        }
+
+        function deleteGalleryItem(id) {
+            savedGallery = savedGallery.filter(g => g.id !== id);
+            saveToLocalStorage();
+            updateGalleryBadge();
+            renderGalleryGrid();
+        }
+
+        function updateGalleryBadge() {
+            document.getElementById('galleryCountBadge').innerText = savedGallery.length;
+        }
+
+        function renderGalleryGrid() {
+            const grid = document.getElementById('galleryGrid');
+            if (savedGallery.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-500">
+                        <i class="fa-solid fa-palette text-4xl mb-3 opacity-30"></i>
+                        <p class="text-sm">No saved artwork in your gallery yet.</p>
+                        <p class="text-xs text-slate-600 mt-1">Mix colors and save your paintings to view them here.</p>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = savedGallery.map(item => `
+                <div class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-xl flex flex-col group">
+                    <div class="aspect-video relative bg-slate-900 overflow-hidden">
+                        <img src="${item.dataUrl}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            <button onclick="loadGalleryItem(${item.id})" class="px-3 py-1.5 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow">
+                                <i class="fa-solid fa-folder-open mr-1"></i> Load
+                            </button>
+                            <button onclick="deleteGalleryItem(${item.id})" class="px-3 py-1.5 bg-rose-600 text-white font-bold text-xs rounded-lg shadow">
+                                <i class="fa-solid fa-trash mr-1"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-3 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-100 truncate">${item.title}</h3>
+                            <span class="text-[10px] text-slate-500 font-mono">${item.date}</span>
+                        </div>
+                        <div class="flex items-center gap-1 mt-2">
+                            ${item.swatches.slice(0, 6).map(sw => `<span class="w-3 h-3 rounded-full border border-white/20" style="background-color: ${sw}"></span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- MAIN UI UPDATE ROUTINE ---
 
         function updateUI() {
             const computed = computeRgbLightColor();
 
-            // Swatches & Values
             document.getElementById('resultColorSwatch').style.backgroundColor = computed.hex;
             document.getElementById('resultColorName').innerText = computed.name;
             document.getElementById('resultColorHex').innerText = computed.hex;
-            document.getElementById('resultColorHsl').innerText = computed.hsl;
 
-            // Meter Bars & Drop Counters
-            document.getElementById('redBar').style.width = `${(computed.r / 255) * 100}%`;
-            document.getElementById('greenBar').style.width = `${(computed.g / 255) * 100}%`;
-            document.getElementById('blueBar').style.width = `${(computed.b / 255) * 100}%`;
+            const max = Math.max(redDrops, greenDrops, blueDrops, 1);
+            document.getElementById('redBar').style.width = `${(redDrops / max) * 100}%`;
+            document.getElementById('greenBar').style.width = `${(greenDrops / max) * 100}%`;
+            document.getElementById('blueBar').style.width = `${(blueDrops / max) * 100}%`;
 
-            document.getElementById('redVal').innerText = `${computed.r} (${redDrops}d)`;
-            document.getElementById('greenVal').innerText = `${computed.g} (${greenDrops}d)`;
-            document.getElementById('blueVal').innerText = `${computed.b} (${blueDrops}d)`;
+            document.getElementById('redVal').innerText = `${redDrops}d`;
+            document.getElementById('greenVal').innerText = `${greenDrops}d`;
+            document.getElementById('blueVal').innerText = `${blueDrops}d`;
+
+            drawPaletteCanvas();
         }
 
-        // --- APP BOOTSTRAP ---
+        // Initializer
         window.onload = function() {
-            resizeCanvas();
             loadFromLocalStorage();
+            resizeCanvas();
             updateUI();
-            renderSavedShelf();
-            renderDiscoveries();
-            animateLiquid();
+            renderPaintTray();
+            updateGalleryBadge();
         };
+
+        window.addEventListener('resize', resizeCanvas);
     </script>
 </body>
 </html>
