@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ColorCraft Studio - Interactive Color Lab</title>
+    <title>ColorCraft Studio - Additive RGB Light Lab</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -19,14 +19,6 @@
                     fontFamily: {
                         sans: ['Plus Jakarta Sans', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        lab: {
-                            50: '#f4f6ff',
-                            100: '#e8ebff',
-                            800: '#1e1b4b',
-                            900: '#0f172a',
-                        }
                     }
                 }
             }
@@ -40,20 +32,11 @@
             -webkit-user-select: none;
         }
         
-        /* Custom Liquid Waves & Canvas Styling */
         .flask-glass {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 100%);
-            backdrop-filter: blur(8px);
-            border: 3px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15),
-                        inset 0 0 15px rgba(255, 255, 255, 0.3);
-        }
-
-        .dark .flask-glass {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
-            border: 3px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37),
-                        inset 0 0 15px rgba(255, 255, 255, 0.05);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 0 20px rgba(255, 255, 255, 0.1);
         }
 
         /* Drip drop animation */
@@ -74,11 +57,12 @@
 
         .animated-drop {
             position: absolute;
-            width: 16px;
-            height: 22px;
+            width: 18px;
+            height: 24px;
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            animation: dropFall 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+            animation: dropFall 0.45s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
             z-index: 30;
+            box-shadow: 0 0 12px currentColor;
         }
 
         /* Custom Scrollbar */
@@ -90,49 +74,37 @@
             background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(156, 163, 175, 0.4);
+            background: rgba(156, 163, 175, 0.3);
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(107, 114, 128, 0.7);
+            background: rgba(156, 163, 175, 0.5);
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
 
-    <!-- Top Navigation Bar -->
+    <!-- Header Navigation -->
     <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                    <i class="fa-solid font-bold fa-flask-vial text-white text-xl"></i>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-500 via-green-500 to-blue-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-flask-vial text-slate-950 text-xl font-black"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400">
+                    <h1 class="text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-red-400 via-green-300 to-blue-400">
                         ColorCraft Studio
                     </h1>
-                    <p class="text-xs text-slate-400 hidden sm:block">Interactive Liquid & Light Color Physics Lab</p>
+                    <p class="text-xs text-slate-400 font-medium">Additive RGB Light Laboratory</p>
                 </div>
             </div>
 
-            <!-- Mode Selector Tabs -->
-            <div class="flex items-center gap-2 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700/60">
-                <button id="modeSandboxBtn" onclick="switchMainTab('sandbox')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 bg-indigo-600 text-white shadow-md">
-                    <i class="fa-solid fa-flask mr-1.5"></i> Lab Sandbox
-                </button>
-                <button id="modeChallengeBtn" onclick="switchMainTab('challenge')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-200">
-                    <i class="fa-solid fa-trophy mr-1.5"></i> Challenge Mode
-                </button>
-                <button id="modeCookbookBtn" onclick="switchMainTab('cookbook')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-200 relative">
-                    <i class="fa-solid fa-book-bookmark mr-1.5"></i> Cookbook
-                    <span id="unlockedBadge" class="ml-1 px-1.5 py-0.2 bg-emerald-500 text-[10px] text-white rounded-full font-bold">0</span>
-                </button>
-            </div>
-
-            <!-- Audio & Theme Toggle -->
             <div class="flex items-center gap-2">
-                <button id="soundToggleBtn" onclick="toggleAudio()" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 flex items-center justify-center transition-all" title="Toggle Sound Effects">
+                <button onclick="toggleAudio()" id="soundToggleBtn" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-all" title="Toggle Sound">
                     <i id="soundIcon" class="fa-solid fa-volume-high"></i>
+                </button>
+                <button onclick="resetAllLocalStorage()" class="px-3 py-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5" title="Reset All Saved Data">
+                    <i class="fa-solid fa-trash-can"></i> Reset Storage
                 </button>
             </div>
         </div>
@@ -141,307 +113,201 @@
     <!-- Main Workspace -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- LEFT PANEL: Lab Controls & Pigment Dispenser (4 Cols) -->
+        <!-- LEFT PANEL: Primary Palette Droppers (4 Cols) -->
         <section class="lg:col-span-4 flex flex-col gap-5">
             
-            <!-- PROMINENT Color Mode Switcher Card -->
-            <div class="bg-gradient-to-br from-indigo-900/60 to-slate-800/80 border-2 border-indigo-500/50 rounded-2xl p-4 shadow-2xl backdrop-blur-sm">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-black uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
-                        <i class="fa-solid fa-sliders text-amber-400"></i> Physics Engine Mode
-                    </span>
-                    <span id="modeToolTip" class="text-[11px] text-indigo-400 hover:text-indigo-200 font-medium cursor-pointer" onclick="togglePhysicsInfoModal()">
-                        <i class="fa-solid fa-circle-info mr-0.5"></i> Info
-                    </span>
-                </div>
-
-                <!-- Prominent Dual Toggle -->
-                <div class="grid grid-cols-2 gap-2 bg-slate-950/80 p-1.5 rounded-xl border border-indigo-500/30 mb-3">
-                    <button id="physicsAdditiveBtn" onclick="setPhysicsMode('additive')" class="py-2.5 px-3 rounded-lg text-xs font-black flex flex-col items-center justify-center gap-1 transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-2 ring-amber-400">
-                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-yellow-300"></i> Additive Light</span>
-                        <span class="text-[10px] font-normal opacity-90">Red + Green = Yellow</span>
-                    </button>
-                    <button id="physicsSubtractiveBtn" onclick="setPhysicsMode('subtractive')" class="py-2.5 px-3 rounded-lg text-xs font-semibold flex flex-col items-center justify-center gap-1 transition-all text-slate-400 hover:text-white">
-                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-palette"></i> Paint Pigment</span>
-                        <span class="text-[10px] font-normal opacity-70">Red + Green = Olive</span>
-                    </button>
-                </div>
-
-                <p id="physicsDescription" class="text-xs text-slate-300 leading-relaxed bg-slate-900/70 p-2.5 rounded-lg border border-slate-700/60">
-                    <b class="text-amber-300"><i class="fa-solid fa-bolt mr-1"></i>Additive Light Mode Active:</b> Combining Red + Green strictly produces <b>Vivid Yellow</b>! Adding more Red (2 Red + 1 Green) creates <b>Orange</b>.
-                </p>
-            </div>
-
-            <!-- Color Palette Dispenser -->
-            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xl backdrop-blur-sm flex-1 flex flex-col">
+            <!-- Exact 3 Primary RGB Light Palette -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-2xl backdrop-blur-md flex-1 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-                        <i class="fa-solid fa-droplet text-indigo-400"></i> Liquid Palette Dispenser
-                    </h2>
-                    <div class="flex items-center gap-1.5 bg-slate-900/60 px-2.5 py-1 rounded-lg border border-slate-700/50">
-                        <span class="text-[11px] text-slate-400">Drip Vol:</span>
-                        <select id="dripVolumeSelect" class="bg-transparent text-xs font-bold text-indigo-300 focus:outline-none">
-                            <option value="1">1 Drop (1x)</option>
-                            <option value="3">3 Drops (3x)</option>
-                            <option value="5">Splash (5x)</option>
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+                            <i class="fa-solid fa-droplet text-indigo-400"></i> RGB Primary Palette
+                        </h2>
+                        <p class="text-[11px] text-slate-400">Add pure light drops into the vessel</p>
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-slate-950/80 px-2.5 py-1 rounded-lg border border-slate-800">
+                        <span class="text-[11px] text-slate-400">Drop Step:</span>
+                        <select id="dropStepSelect" class="bg-transparent text-xs font-bold text-indigo-400 focus:outline-none cursor-pointer">
+                            <option value="1">1 Drop</option>
+                            <option value="2">2 Drops</option>
+                            <option value="5">5 Drops</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Primary Dropper Buttons Grid -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-                    <!-- Red -->
-                    <button onclick="addLiquidDrop('#FF0000', 'Red')" class="group relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900/80 border border-red-500/30 hover:border-red-500 hover:bg-red-500/10 active:scale-95 transition-all shadow-md">
-                        <div class="w-8 h-8 rounded-full bg-red-600 shadow-lg shadow-red-600/40 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
-                            <i class="fa-solid fa-droplet text-xs opacity-80"></i>
+                <!-- Red, Green, Blue Palette Buttons -->
+                <div class="grid grid-cols-3 gap-3 my-auto">
+                    <!-- Red Dropper -->
+                    <button onclick="addRgbDrop('red')" class="group relative flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-950/80 border border-red-500/40 hover:border-red-500 hover:bg-red-500/10 active:scale-95 transition-all shadow-lg shadow-red-950/40">
+                        <div class="w-12 h-12 rounded-full bg-red-600 shadow-lg shadow-red-600/50 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
+                            <i class="fa-solid fa-droplet text-base opacity-90"></i>
                         </div>
-                        <span class="text-xs font-bold text-slate-200 mt-2">Red</span>
+                        <span class="text-xs font-extrabold text-red-400 mt-2.5">RED</span>
+                        <span class="text-[10px] font-mono text-slate-500">#FF0000</span>
                     </button>
 
-                    <!-- Green -->
-                    <button onclick="addLiquidDrop('#00FF00', 'Green')" class="group relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900/80 border border-emerald-500/30 hover:border-emerald-500 hover:bg-emerald-500/10 active:scale-95 transition-all shadow-md">
-                        <div class="w-8 h-8 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/40 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
-                            <i class="fa-solid fa-droplet text-xs opacity-80"></i>
+                    <!-- Green Dropper -->
+                    <button onclick="addRgbDrop('green')" class="group relative flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-950/80 border border-emerald-500/40 hover:border-emerald-500 hover:bg-emerald-500/10 active:scale-95 transition-all shadow-lg shadow-emerald-950/40">
+                        <div class="w-12 h-12 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
+                            <i class="fa-solid fa-droplet text-base opacity-90"></i>
                         </div>
-                        <span class="text-xs font-bold text-slate-200 mt-2">Green</span>
+                        <span class="text-xs font-extrabold text-emerald-400 mt-2.5">GREEN</span>
+                        <span class="text-[10px] font-mono text-slate-500">#00FF00</span>
                     </button>
 
-                    <!-- Blue -->
-                    <button onclick="addLiquidDrop('#0000FF', 'Blue')" class="group relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900/80 border border-blue-500/30 hover:border-blue-500 hover:bg-blue-500/10 active:scale-95 transition-all shadow-md">
-                        <div class="w-8 h-8 rounded-full bg-blue-600 shadow-lg shadow-blue-600/40 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
-                            <i class="fa-solid fa-droplet text-xs opacity-80"></i>
+                    <!-- Blue Dropper -->
+                    <button onclick="addRgbDrop('blue')" class="group relative flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-950/80 border border-blue-500/40 hover:border-blue-500 hover:bg-blue-500/10 active:scale-95 transition-all shadow-lg shadow-blue-950/40">
+                        <div class="w-12 h-12 rounded-full bg-blue-600 shadow-lg shadow-blue-600/50 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
+                            <i class="fa-solid fa-droplet text-base opacity-90"></i>
                         </div>
-                        <span class="text-xs font-bold text-slate-200 mt-2">Blue</span>
-                    </button>
-
-                    <!-- Yellow -->
-                    <button onclick="addLiquidDrop('#FFFF00', 'Yellow')" class="group relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900/80 border border-yellow-500/30 hover:border-yellow-500 hover:bg-yellow-500/10 active:scale-95 transition-all shadow-md">
-                        <div class="w-8 h-8 rounded-full bg-yellow-400 shadow-lg shadow-yellow-400/40 group-hover:scale-110 transition-transform flex items-center justify-center text-slate-900">
-                            <i class="fa-solid fa-droplet text-xs opacity-80"></i>
-                        </div>
-                        <span class="text-xs font-bold text-slate-200 mt-2">Yellow</span>
-                    </button>
-
-                    <!-- White -->
-                    <button onclick="addLiquidDrop('#FFFFFF', 'White')" class="group relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900/80 border border-slate-400/30 hover:border-slate-300 hover:bg-slate-300/10 active:scale-95 transition-all shadow-md">
-                        <div class="w-8 h-8 rounded-full bg-slate-100 shadow-lg shadow-slate-100/40 group-hover:scale-110 transition-transform flex items-center justify-center text-slate-900 border border-slate-300">
-                            <i class="fa-solid fa-droplet text-xs opacity-80"></i>
-                        </div>
-                        <span class="text-xs font-bold text-slate-200 mt-2">White</span>
-                    </button>
-
-                    <!-- Black -->
-                    <button onclick="addLiquidDrop('#000000', 'Black')" class="group relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900/80 border border-slate-600 hover:border-slate-400 hover:bg-slate-700/20 active:scale-95 transition-all shadow-md">
-                        <div class="w-8 h-8 rounded-full bg-slate-950 shadow-lg shadow-black/80 group-hover:scale-110 transition-transform flex items-center justify-center text-slate-400 border border-slate-700">
-                            <i class="fa-solid fa-droplet text-xs opacity-80"></i>
-                        </div>
-                        <span class="text-xs font-bold text-slate-200 mt-2">Black</span>
+                        <span class="text-xs font-extrabold text-blue-400 mt-2.5">BLUE</span>
+                        <span class="text-[10px] font-mono text-slate-500">#0000FF</span>
                     </button>
                 </div>
 
-                <!-- Custom Color Picker Dropper -->
-                <div class="mt-auto pt-3 border-t border-slate-700/50 flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
-                        <input type="color" id="customColorPicker" value="#a855f7" class="w-9 h-9 rounded-lg bg-transparent border-0 cursor-pointer">
-                        <span class="text-xs font-medium text-slate-300">Custom Pigment</span>
+                <!-- Recipe Quick Guide Shortcuts -->
+                <div class="mt-4 pt-4 border-t border-slate-800">
+                    <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-400 mr-1"></i> Quick Mixing Guides
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <button onclick="applyPresetRatio(1, 1, 0)" class="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-left transition-all">
+                            <span class="font-bold text-amber-300 block">1 Red + 1 Green</span>
+                            <span class="text-[10px] text-slate-400">Pure Yellow (#FFFF00)</span>
+                        </button>
+                        <button onclick="applyPresetRatio(2, 1, 0)" class="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-left transition-all">
+                            <span class="font-bold text-orange-400 block">2 Red + 1 Green</span>
+                            <span class="text-[10px] text-slate-400">Vibrant Orange (#FF7F00)</span>
+                        </button>
+                        <button onclick="applyPresetRatio(1, 0, 1)" class="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-left transition-all">
+                            <span class="font-bold text-fuchsia-400 block">1 Red + 1 Blue</span>
+                            <span class="text-[10px] text-slate-400">Hot Magenta (#FF00FF)</span>
+                        </button>
+                        <button onclick="applyPresetRatio(1, 1, 1)" class="p-2 bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-left transition-all">
+                            <span class="font-bold text-slate-100 block">1 Red + 1 Green + 1 Blue</span>
+                            <span class="text-[10px] text-slate-400">Pure White (#FFFFFF)</span>
+                        </button>
                     </div>
-                    <button onclick="addCustomLiquidDrop()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-bold transition-all">
-                        <i class="fa-solid fa-plus mr-1"></i> Add Custom
-                    </button>
-                </div>
-            </div>
-
-            <!-- Quick Recipe Shortcut Presets -->
-            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 shadow-xl backdrop-blur-sm">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">
-                    <i class="fa-solid fa-bolt text-yellow-400 mr-1"></i> Step-By-Step Mix Recipes
-                </h3>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <button onclick="runPresetSequence(['Red', 'Green'])" class="p-2 bg-slate-900/70 hover:bg-indigo-950/60 border border-amber-500/40 rounded-xl text-left transition-all">
-                        <span class="font-bold text-yellow-300 block">Red + Green</span>
-                        <span class="text-[10px] text-slate-300">Creates Vibrant Yellow</span>
-                    </button>
-                    <button onclick="runPresetSequence(['Red', 'Red', 'Green'])" class="p-2 bg-slate-900/70 hover:bg-indigo-950/60 border border-orange-500/40 rounded-xl text-left transition-all">
-                        <span class="font-bold text-orange-400 block">Red + Red + Green</span>
-                        <span class="text-[10px] text-slate-300">Red + Green(Yellow) + Red = Orange</span>
-                    </button>
-                    <button onclick="runPresetSequence(['Red', 'Blue'])" class="p-2 bg-slate-900/70 hover:bg-slate-700/50 border border-slate-700/60 rounded-xl text-left transition-all">
-                        <span class="font-bold text-pink-400 block">Red + Blue</span>
-                        <span class="text-[10px] text-slate-400">Creates Magenta</span>
-                    </button>
-                    <button onclick="runPresetSequence(['Green', 'Blue'])" class="p-2 bg-slate-900/70 hover:bg-slate-700/50 border border-slate-700/60 rounded-xl text-left transition-all">
-                        <span class="font-bold text-cyan-400 block">Green + Blue</span>
-                        <span class="text-[10px] text-slate-400">Creates Vibrant Cyan</span>
-                    </button>
                 </div>
             </div>
 
         </section>
 
-        <!-- CENTER PANEL: Animated Flask Container & Live Visuals (5 Cols) -->
+        <!-- CENTER PANEL: Interactive Flask & Liquid Visualizer (5 Cols) -->
         <section class="lg:col-span-5 flex flex-col gap-5">
             
-            <!-- Sandbox / Interactive Lab View -->
-            <div id="mainLabView" class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl backdrop-blur-sm flex-1 flex flex-col items-center justify-between relative overflow-hidden min-h-[460px]">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-2xl backdrop-blur-md flex-1 flex flex-col items-center justify-between relative overflow-hidden min-h-[460px]">
                 
-                <!-- Container Controls & Water Clear -->
+                <!-- Vessel Top Actions -->
                 <div class="w-full flex justify-between items-center z-10">
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Vessel:</span>
-                        <select id="vesselTypeSelect" onchange="changeVesselType(this.value)" class="bg-slate-900 text-slate-200 text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-700 focus:outline-none">
-                            <option value="flask">Chemistry Flask</option>
-                            <option value="beaker">Graduated Beaker</option>
-                            <option value="bowl">Mixing Bowl</option>
-                        </select>
-                    </div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        <i class="fa-solid fa-vial text-indigo-400 mr-1"></i> Active Light Flask
+                    </span>
 
-                    <button onclick="clearFlask()" class="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-rotate-left"></i> Empty & Clear
+                    <button onclick="emptyFlask()" class="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-left"></i> Empty Flask
                     </button>
                 </div>
 
-                <!-- Animated Drop Spout Visual Target -->
+                <!-- Animated Drop Spout Anchor -->
                 <div id="dropSpout" class="relative w-full flex justify-center items-center h-8 z-20">
-                    <!-- Drops spawn here dynamically -->
+                    <!-- Spouted drops animate here -->
                 </div>
 
-                <!-- Main Glassware Flask Container -->
+                <!-- Chemistry Glass Beaker -->
                 <div class="relative flex items-end justify-center my-auto z-10">
-                    
-                    <!-- Chemistry Flask Vessel Container -->
                     <div id="vesselGraphic" class="relative w-56 h-64 flask-glass rounded-b-full rounded-t-3xl overflow-hidden flex flex-col justify-end transition-all duration-300">
-                        
-                        <!-- Bubbles Animation Container -->
-                        <div id="bubblesContainer" class="absolute inset-0 pointer-events-none z-20"></div>
-
-                        <!-- Fluid Liquid Fill Canvas -->
-                        <canvas id="liquidCanvas" class="w-full h-full block relative z-10 transition-colors duration-500"></canvas>
+                        <!-- Fluid Liquid Canvas -->
+                        <canvas id="liquidCanvas" class="w-full h-full block relative z-10"></canvas>
                     </div>
 
-                    <!-- Volume Markings overlay -->
-                    <div class="absolute -right-10 bottom-6 flex flex-col justify-between h-48 text-[10px] font-mono text-slate-500 select-none">
-                        <span>500ml -</span>
-                        <span>400ml -</span>
-                        <span>300ml -</span>
-                        <span>200ml -</span>
-                        <span>100ml -</span>
+                    <!-- Volume Graduation Lines -->
+                    <div class="absolute -right-10 bottom-6 flex flex-col justify-between h-48 text-[10px] font-mono text-slate-600 select-none">
+                        <span>40d -</span>
+                        <span>30d -</span>
+                        <span>20d -</span>
+                        <span>10d -</span>
+                        <span>0d -</span>
                     </div>
                 </div>
 
-                <!-- Color Result & Spectral Info Card -->
-                <div class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 z-10 backdrop-blur-md">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2.5">
-                            <div id="resultColorSwatch" class="w-8 h-8 rounded-lg border-2 border-white/30 shadow-lg bg-slate-700 transition-all transform hover:scale-105"></div>
+                <!-- Live Color Result Dashboard Card -->
+                <div class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-4 z-10 backdrop-blur-md">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div id="resultColorSwatch" class="w-10 h-10 rounded-xl border-2 border-white/20 shadow-lg bg-black transition-all"></div>
                             <div>
-                                <h3 id="resultColorName" class="text-sm font-extrabold text-white">Empty Water</h3>
-                                <p id="resultColorHex" class="text-xs font-mono text-indigo-400">#FFFFFF (Clear)</p>
+                                <h3 id="resultColorName" class="text-base font-extrabold text-white">Darkness</h3>
+                                <div class="flex items-center gap-2 text-xs font-mono">
+                                    <span id="resultColorHex" class="text-indigo-400 font-bold">#000000</span>
+                                    <span id="resultColorHsl" class="text-slate-500">hsl(0, 0%, 0%)</span>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="text-right font-mono text-xs">
-                            <span id="volumeCounter" class="text-slate-300 font-bold">0 Drops</span>
-                            <span class="block text-[10px] text-slate-500">Total Volume</span>
-                        </div>
+                        <button onclick="saveColorToShelf()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-all shadow-lg flex items-center gap-1.5">
+                            <i class="fa-solid fa-bookmark"></i> Save Color
+                        </button>
                     </div>
 
-                    <!-- RGB Breakdown Bar -->
-                    <div class="space-y-1 text-[11px] font-mono">
+                    <!-- RGB Channel Breakdown Sliders/Meters -->
+                    <div class="space-y-1.5 text-xs font-mono">
                         <div class="flex items-center gap-2">
                             <span class="w-3 text-red-400 font-bold">R</span>
-                            <div class="flex-1 bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div class="flex-1 bg-slate-800 h-2 rounded-full overflow-hidden">
                                 <div id="redBar" class="bg-red-500 h-full w-0 transition-all duration-300"></div>
                             </div>
-                            <span id="redVal" class="w-8 text-right text-slate-400">0</span>
+                            <span id="redVal" class="w-12 text-right text-slate-300">0 (0d)</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="w-3 text-emerald-400 font-bold">G</span>
-                            <div class="flex-1 bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div class="flex-1 bg-slate-800 h-2 rounded-full overflow-hidden">
                                 <div id="greenBar" class="bg-emerald-500 h-full w-0 transition-all duration-300"></div>
                             </div>
-                            <span id="greenVal" class="w-8 text-right text-slate-400">0</span>
+                            <span id="greenVal" class="w-12 text-right text-slate-300">0 (0d)</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="w-3 text-blue-400 font-bold">B</span>
-                            <div class="flex-1 bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div class="flex-1 bg-slate-800 h-2 rounded-full overflow-hidden">
                                 <div id="blueBar" class="bg-blue-500 h-full w-0 transition-all duration-300"></div>
                             </div>
-                            <span id="blueVal" class="w-8 text-right text-slate-400">0</span>
+                            <span id="blueVal" class="w-12 text-right text-slate-300">0 (0d)</span>
                         </div>
                     </div>
                 </div>
 
-            </div>
-
-            <!-- Challenge View (Hidden by Default) -->
-            <div id="challengeLabView" class="hidden bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl backdrop-blur-sm flex-col gap-4">
-                <div class="flex items-center justify-between bg-slate-900/80 p-3 rounded-xl border border-slate-700/60">
-                    <div>
-                        <span class="text-xs text-indigo-400 font-bold uppercase tracking-wider">Target Match Challenge</span>
-                        <h3 id="targetColorName" class="text-lg font-extrabold text-white">Target: Vibrant Yellow</h3>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-center">
-                            <div id="targetColorSwatch" class="w-10 h-10 rounded-xl border-2 border-white/30 shadow-md bg-yellow-400"></div>
-                            <span class="text-[10px] text-slate-400 font-mono mt-0.5 block">Target</span>
-                        </div>
-                        <div class="text-center">
-                            <div id="currentMatchSwatch" class="w-10 h-10 rounded-xl border-2 border-white/30 shadow-md bg-white"></div>
-                            <span class="text-[10px] text-slate-400 font-mono mt-0.5 block">Yours</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Match Meter -->
-                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-                    <div class="flex justify-between items-center text-xs font-bold mb-1.5">
-                        <span class="text-slate-300">Color Match Precision:</span>
-                        <span id="matchPercentage" class="text-indigo-400 font-mono text-sm">0% Match</span>
-                    </div>
-                    <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden p-0.5 border border-slate-700">
-                        <div id="matchMeterBar" class="bg-gradient-to-r from-rose-500 via-amber-400 to-emerald-400 h-full w-0 rounded-full transition-all duration-300"></div>
-                    </div>
-                </div>
-
-                <div class="flex gap-2">
-                    <button onclick="nextChallenge()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-all shadow-lg flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-forward"></i> Next Target Challenge
-                    </button>
-                </div>
             </div>
 
         </section>
 
-        <!-- RIGHT PANEL: Mixture Log & Cookbook Discoveries (3 Cols) -->
+        <!-- RIGHT PANEL: Saved Shelf & Discoveries (3 Cols) -->
         <section class="lg:col-span-3 flex flex-col gap-5">
             
-            <!-- Recipe Breakdown & Drops Log -->
-            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 shadow-xl backdrop-blur-sm flex-1 flex flex-col">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
-                    <span><i class="fa-solid fa-list-ol text-indigo-400 mr-1.5"></i> Flask Recipe Mix</span>
-                    <button onclick="clearFlask()" class="text-[10px] text-rose-400 hover:underline">Reset</button>
-                </h3>
+            <!-- Saved Color Bookshelf -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-2xl backdrop-blur-md flex-1 flex flex-col">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-box-archive text-indigo-400"></i> Saved Color Shelf
+                    </h3>
+                    <span id="savedCount" class="text-xs font-mono text-indigo-400 font-bold">0 Saved</span>
+                </div>
 
-                <!-- Active Liquid Ingredients Stack -->
-                <div id="ingredientLog" class="space-y-2 flex-1 overflow-y-auto max-h-[220px] pr-1">
-                    <div class="text-center py-8 text-slate-500 text-xs">
-                        <i class="fa-solid fa-flask-glass text-2xl mb-2 block opacity-40"></i>
-                        No drops added yet. Select a color drop from the palette!
-                    </div>
+                <div id="savedShelfList" class="space-y-2 overflow-y-auto max-h-[220px] pr-1 flex-1">
+                    <!-- Saved shelf cards render here dynamically -->
                 </div>
             </div>
 
-            <!-- Recipe Cookbook / Discovery Unlocks -->
-            <div id="cookbookPanel" class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 shadow-xl backdrop-blur-sm flex-1 flex flex-col">
+            <!-- Discovery Recipes Achievements -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-2xl backdrop-blur-md flex-1 flex flex-col">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                        <i class="fa-solid fa-book-open text-emerald-400"></i> Discovered Cookbook
+                        <i class="fa-solid fa-trophy text-amber-400"></i> RGB Discoveries
                     </h3>
-                    <span id="cookbookProgress" class="text-xs font-mono text-emerald-400 font-bold">0 / 12 Unlocked</span>
+                    <span id="discoveryProgress" class="text-xs font-mono text-amber-400 font-bold">0 / 6</span>
                 </div>
 
-                <div id="cookbookList" class="space-y-2 overflow-y-auto max-h-[260px] pr-1 flex-1">
-                    <!-- Recipes generated dynamically -->
+                <div id="discoveryList" class="space-y-2 overflow-y-auto max-h-[200px] pr-1 flex-1">
+                    <!-- Achievements render here dynamically -->
                 </div>
             </div>
 
@@ -449,91 +315,52 @@
 
     </main>
 
-    <!-- Info Modal for Additive vs Subtractive Physics -->
-    <div id="physicsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-            <button onclick="togglePhysicsInfoModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
-                <i class="fa-solid fa-atom text-indigo-400"></i> Color Physics Guide
-            </h3>
-            <div class="space-y-4 text-xs text-slate-300 leading-relaxed">
-                <div class="bg-amber-950/40 p-3 rounded-xl border border-amber-500/40">
-                    <h4 class="font-bold text-amber-300 text-sm mb-1">1. Additive Physics (RGB Light) [DEFAULT]</h4>
-                    <p>Models combining light spectrums. <b>Red + Green strictly produces bright Yellow!</b> Adding another drop of Red (Red + Yellow) shifts the balance to <b>Vivid Orange</b>. Red + Green + Blue = Pure White.</p>
-                </div>
-                <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-                    <h4 class="font-bold text-indigo-300 text-sm mb-1">2. Subtractive Physics (RYB / Paints)</h4>
-                    <p>Models physical paints where pigments absorb light. Mixing Red + Green produces Earthy Olive/Brown. Yellow requires Yellow pigment or Blue + Yellow for Green.</p>
-                </div>
-            </div>
-            <button onclick="togglePhysicsInfoModal()" class="w-full mt-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-all">
-                Got it, let's experiment!
-            </button>
-        </div>
-    </div>
-
-    <!-- Application Engine JavaScript Logic -->
+    <!-- JavaScript Application Engine -->
     <script>
-        // --- STATE MANAGEMENT ---
-        let currentPhysicsMode = 'additive'; // Defaulting to strictly Additive Light physics mode (Red + Green = Yellow)
-        let currentVessel = 'flask'; // 'flask', 'beaker', 'bowl'
-        let currentDrops = []; // Array of { colorHex, colorName, amount, rgb }
+        // --- LOCAL STORAGE KEYS ---
+        const STORAGE_FLASK_KEY = 'colorcraft_flask_state_v2';
+        const STORAGE_SHELF_KEY = 'colorcraft_saved_shelf_v2';
+        const STORAGE_DISCOVERIES_KEY = 'colorcraft_discoveries_v2';
+
+        // --- STATE ---
+        let redDrops = 0;
+        let greenDrops = 0;
+        let blueDrops = 0;
         let soundEnabled = true;
-        let splashRipples = [];
 
-        // Challenge Mode State
-        let challengeTarget = { name: 'Vibrant Yellow', hex: '#FFFF00', rgb: [255, 255, 0] };
-        const challengeList = [
-            { name: 'Vibrant Yellow', hex: '#FFFF00', rgb: [255, 255, 0] },
-            { name: 'Vivid Orange', hex: '#FF7F00', rgb: [255, 127, 0] },
-            { name: 'Electric Cyan', hex: '#00FFFF', rgb: [0, 255, 255] },
-            { name: 'Hot Magenta', hex: '#FF00FF', rgb: [255, 0, 255] },
-            { name: 'Pure White Light', hex: '#FFFFFF', rgb: [255, 255, 255] },
-            { name: 'Emerald Green', hex: '#00FF00', rgb: [0, 255, 0] }
-        ];
-        let challengeIndex = 0;
+        let savedShelf = [];
+        let unlockedDiscoveries = new Set();
 
-        // Cookbook Recipe Master Data
-        const cookbookRecipes = [
-            { id: 'yellow_light', name: 'Vibrant Yellow', mode: 'additive', combo: ['Red', 'Green'], hex: '#FFFF00', desc: 'Light Mode: Combining Red + Green strictly produces bright Yellow!' },
-            { id: 'orange_light', name: 'Vivid Orange', mode: 'additive', combo: ['Red', 'Green', 'Red'], hex: '#FF7F00', desc: 'Light Mode: Red + Green (Yellow) + Red strictly shifts to Orange!' },
-            { id: 'magenta_light', name: 'Hot Magenta', mode: 'additive', combo: ['Red', 'Blue'], hex: '#FF00FF', desc: 'Light Mode: Red + Blue beams overlay into Magenta.' },
-            { id: 'cyan_light', name: 'Electric Cyan', mode: 'additive', combo: ['Green', 'Blue'], hex: '#00FFFF', desc: 'Light Mode: Green + Blue light overlap.' },
-            { id: 'white_light', name: 'Solar White Light', mode: 'additive', combo: ['Red', 'Green', 'Blue'], hex: '#FFFFFF', desc: 'Light Mode: All three light primaries yield Pure White.' },
-            { id: 'olive_pigment', name: 'Earthy Olive', mode: 'subtractive', combo: ['Red', 'Green'], hex: '#556B2F', desc: 'Pigment Mode: Red & Green paint pigments cancel out to Olive.' },
-            { id: 'orange_pigment', name: 'Sunset Orange', mode: 'subtractive', combo: ['Red', 'Yellow'], hex: '#FF7F00', desc: 'Pigment Mode: Mix Red & Yellow paint.' },
-            { id: 'green_pigment', name: 'Emerald Green', mode: 'subtractive', combo: ['Blue', 'Yellow'], hex: '#008000', desc: 'Pigment Mode: Classic Blue & Yellow paint blend.' },
-            { id: 'purple_pigment', name: 'Royal Purple', mode: 'subtractive', combo: ['Red', 'Blue'], hex: '#800080', desc: 'Pigment Mode: Deep Red & Blue blend.' },
-            { id: 'brown_pigment', name: 'Chestnut Brown', mode: 'subtractive', combo: ['Red', 'Yellow', 'Blue'], hex: '#654321', desc: 'Pigment Mode: Combining all primary paint dyes.' },
-            { id: 'coral_tint', name: 'Soft Coral', mode: 'subtractive', combo: ['Red', 'Yellow', 'White'], hex: '#F08080', desc: 'Pigment Mode: Tinting Orange with White.' },
-            { id: 'navy_shade', name: 'Midnight Navy', mode: 'subtractive', combo: ['Blue', 'Black'], hex: '#000080', desc: 'Pigment Mode: Shading Blue with Black.' }
+        // RGB Master Recipes Cookbook
+        const rgbDiscoveries = [
+            { id: 'yellow', name: 'Pure Yellow', redRatio: 1, greenRatio: 1, blueRatio: 0, hex: '#FFFF00', desc: 'Equal Red & Green Light' },
+            { id: 'orange', name: 'Flame Orange', redRatio: 2, greenRatio: 1, blueRatio: 0, hex: '#FF7F00', desc: '2 Red + 1 Green Light' },
+            { id: 'magenta', name: 'Hot Magenta', redRatio: 1, greenRatio: 0, blueRatio: 1, hex: '#FF00FF', desc: 'Equal Red & Blue Light' },
+            { id: 'cyan', name: 'Electric Cyan', redRatio: 0, greenRatio: 1, blueRatio: 1, hex: '#00FFFF', desc: 'Equal Green & Blue Light' },
+            { id: 'white', name: 'Solar White', redRatio: 1, greenRatio: 1, blueRatio: 1, hex: '#FFFFFF', desc: 'Equal Red + Green + Blue' },
+            { id: 'lime', name: 'Bright Lime Green', redRatio: 1, greenRatio: 2, blueRatio: 0, hex: '#7FFF00', desc: '1 Red + 2 Green Light' }
         ];
 
-        let unlockedRecipes = new Set();
-
-        // Color Database for Naming
+        // Color Names Database
         const colorNamesDB = [
-            { name: "Clear Water", rgb: [255, 255, 255], hex: "#FFFFFF" },
-            { name: "Pure Red", rgb: [255, 0, 0], hex: "#FF0000" },
-            { name: "Pure Green", rgb: [0, 255, 0], hex: "#00FF00" },
-            { name: "Pure Blue", rgb: [0, 0, 255], hex: "#0000FF" },
-            { name: "Vibrant Yellow", rgb: [255, 255, 0], hex: "#FFFF00" },
-            { name: "Electric Cyan", rgb: [0, 255, 255], hex: "#00FFFF" },
-            { name: "Hot Magenta", rgb: [255, 0, 255], hex: "#FF00FF" },
-            { name: "Vivid Orange", rgb: [255, 128, 0], hex: "#FF8000" },
-            { name: "Emerald Green", rgb: [0, 128, 0], hex: "#008000" },
-            { name: "Royal Purple", rgb: [128, 0, 128], hex: "#800080" },
-            { name: "Olive Green", rgb: [128, 128, 0], hex: "#808000" },
-            { name: "Chestnut Brown", rgb: [102, 51, 0], hex: "#663300" },
-            { name: "Teal Green", rgb: [0, 128, 128], hex: "#008080" },
-            { name: "Charcoal Dark", rgb: [40, 40, 40], hex: "#282828" },
-            { name: "Soft Coral Pink", rgb: [255, 128, 128], hex: "#FF8080" },
-            { name: "Sky Pastel Blue", rgb: [128, 192, 255], hex: "#80C0FF" }
+            { name: "Darkness (Empty)", rgb: [0, 0, 0] },
+            { name: "Pure Red", rgb: [255, 0, 0] },
+            { name: "Pure Green", rgb: [0, 255, 0] },
+            { name: "Pure Blue", rgb: [0, 0, 255] },
+            { name: "Pure Yellow", rgb: [255, 255, 0] },
+            { name: "Flame Orange", rgb: [255, 127, 0] },
+            { name: "Electric Cyan", rgb: [0, 255, 255] },
+            { name: "Hot Magenta", rgb: [255, 0, 255] },
+            { name: "Solar White", rgb: [255, 255, 255] },
+            { name: "Bright Lime", rgb: [127, 255, 0] },
+            { name: "Spring Green", rgb: [0, 255, 127] },
+            { name: "Deep Violet", rgb: [127, 0, 255] },
+            { name: "Hot Pink", rgb: [255, 0, 127] },
+            { name: "Sky Blue", rgb: [0, 127, 255] },
+            { name: "Warm Amber", rgb: [255, 191, 0] }
         ];
 
-        // --- WEB AUDIO API (SYNTHETIC SOUNDS) ---
+        // --- WEB AUDIO API ---
         let audioCtx = null;
 
         function initAudio() {
@@ -542,20 +369,22 @@
             }
         }
 
-        function playDropSound() {
+        function playDropSound(type) {
             if (!soundEnabled) return;
             try {
                 initAudio();
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 
-                // Frequency pitch bend for liquid drop effect
+                const freqMap = { 'red': 400, 'green': 600, 'blue': 800 };
+                const baseFreq = freqMap[type] || 500;
+
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.08);
+                osc.frequency.setValueAtTime(baseFreq, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, audioCtx.currentTime + 0.08);
                 osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.18);
 
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.18);
 
                 osc.connect(gain);
@@ -563,9 +392,7 @@
 
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.18);
-            } catch (e) {
-                // Audio fallback
-            }
+            } catch (e) {}
         }
 
         function playClearSound() {
@@ -576,17 +403,17 @@
                 const gain = audioCtx.createGain();
                 
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.25);
+                osc.frequency.setValueAtTime(350, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.22);
 
                 gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.22);
 
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
 
                 osc.start();
-                osc.stop(audioCtx.currentTime + 0.25);
+                osc.stop(audioCtx.currentTime + 0.22);
             } catch (e) {}
         }
 
@@ -596,7 +423,297 @@
             btn.className = soundEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark text-rose-400';
         }
 
-        // --- INITIALIZATION & CANVAS ANIMATIONS ---
+        // --- LOCAL STORAGE PERSISTENCE ENGINE ---
+
+        function loadFromLocalStorage() {
+            // Load Flask State
+            try {
+                const savedFlask = localStorage.getItem(STORAGE_FLASK_KEY);
+                if (savedFlask) {
+                    const parsed = JSON.parse(savedFlask);
+                    redDrops = parsed.redDrops || 0;
+                    greenDrops = parsed.greenDrops || 0;
+                    blueDrops = parsed.blueDrops || 0;
+                }
+            } catch (e) { console.error('Error loading flask state:', e); }
+
+            // Load Saved Shelf
+            try {
+                const savedShelfData = localStorage.getItem(STORAGE_SHELF_KEY);
+                if (savedShelfData) {
+                    savedShelf = JSON.parse(savedShelfData);
+                }
+            } catch (e) { console.error('Error loading saved shelf:', e); }
+
+            // Load Discoveries
+            try {
+                const savedDisc = localStorage.getItem(STORAGE_DISCOVERIES_KEY);
+                if (savedDisc) {
+                    unlockedDiscoveries = new Set(JSON.parse(savedDisc));
+                }
+            } catch (e) { console.error('Error loading discoveries:', e); }
+        }
+
+        function saveToLocalStorage() {
+            // Save Flask State
+            localStorage.setItem(STORAGE_FLASK_KEY, JSON.stringify({
+                redDrops,
+                greenDrops,
+                blueDrops
+            }));
+
+            // Save Saved Shelf
+            localStorage.setItem(STORAGE_SHELF_KEY, JSON.stringify(savedShelf));
+
+            // Save Discoveries
+            localStorage.setItem(STORAGE_DISCOVERIES_KEY, JSON.stringify(Array.from(unlockedDiscoveries)));
+        }
+
+        function resetAllLocalStorage() {
+            if (confirm("Reset all saved colors, discoveries, and empty the flask?")) {
+                localStorage.removeItem(STORAGE_FLASK_KEY);
+                localStorage.removeItem(STORAGE_SHELF_KEY);
+                localStorage.removeItem(STORAGE_DISCOVERIES_KEY);
+
+                redDrops = 0;
+                greenDrops = 0;
+                blueDrops = 0;
+                savedShelf = [];
+                unlockedDiscoveries = new Set();
+
+                playClearSound();
+                updateUI();
+                renderSavedShelf();
+                renderDiscoveries();
+            }
+        }
+
+        // --- ADDITIVE RGB LIGHT CALCULATIONS ---
+
+        function computeRgbLightColor() {
+            const totalDrops = redDrops + greenDrops + blueDrops;
+            if (totalDrops === 0) {
+                return { r: 0, g: 0, b: 0, hex: '#000000', hsl: 'hsl(0, 0%, 0%)', name: 'Darkness (Empty)' };
+            }
+
+            // Proportional weighted average scaled by maximum light channel intensity
+            const maxDrops = Math.max(redDrops, greenDrops, blueDrops);
+            
+            const r = Math.round((redDrops / maxDrops) * 255);
+            const g = Math.round((greenDrops / maxDrops) * 255);
+            const b = Math.round((blueDrops / maxDrops) * 255);
+
+            const hex = rgbToHex(r, g, b);
+            const hsl = rgbToHsl(r, g, b);
+            const name = findClosestColorName(r, g, b);
+
+            return { r, g, b, hex, hsl, name };
+        }
+
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(x => {
+                const h = x.toString(16);
+                return h.length === 1 ? '0' + h : h;
+            }).join('').toUpperCase();
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`;
+        }
+
+        function findClosestColorName(r, g, b) {
+            let closestName = "Custom Light Blend";
+            let minDistance = Infinity;
+
+            colorNamesDB.forEach(item => {
+                const dist = Math.sqrt(
+                    Math.pow(r - item.rgb[0], 2) +
+                    Math.pow(g - item.rgb[1], 2) +
+                    Math.pow(b - item.rgb[2], 2)
+                );
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    closestName = item.name;
+                }
+            });
+
+            return closestName;
+        }
+
+        // --- PALETTE ACTIONS ---
+
+        function addRgbDrop(color) {
+            const stepSelect = document.getElementById('dropStepSelect');
+            const count = parseInt(stepSelect.value) || 1;
+
+            if (color === 'red') redDrops += count;
+            if (color === 'green') greenDrops += count;
+            if (color === 'blue') blueDrops += count;
+
+            const hexColorMap = { 'red': '#FF0000', 'green': '#00FF00', 'blue': '#0000FF' };
+            spawnDropAnimation(hexColorMap[color]);
+            playDropSound(color);
+
+            checkDiscoveryUnlocks();
+            saveToLocalStorage();
+            updateUI();
+        }
+
+        function applyPresetRatio(r, g, b) {
+            redDrops = r;
+            greenDrops = g;
+            blueDrops = b;
+
+            playDropSound('green');
+            checkDiscoveryUnlocks();
+            saveToLocalStorage();
+            updateUI();
+        }
+
+        function emptyFlask() {
+            playClearSound();
+            redDrops = 0;
+            greenDrops = 0;
+            blueDrops = 0;
+
+            saveToLocalStorage();
+            updateUI();
+        }
+
+        function spawnDropAnimation(colorHex) {
+            const spout = document.getElementById('dropSpout');
+            const drop = document.createElement('div');
+            drop.className = 'animated-drop';
+            drop.style.backgroundColor = colorHex;
+            drop.style.color = colorHex;
+            drop.style.left = `calc(50% - 9px)`;
+            spout.appendChild(drop);
+
+            setTimeout(() => {
+                if (drop.parentNode) drop.parentNode.removeChild(drop);
+            }, 500);
+        }
+
+        // --- SAVED SHELF ACTIONS ---
+
+        function saveColorToShelf() {
+            const current = computeRgbLightColor();
+            if (redDrops === 0 && greenDrops === 0 && blueDrops === 0) return;
+
+            const newEntry = {
+                id: Date.now(),
+                name: current.name,
+                hex: current.hex,
+                rgbStr: `R:${current.r} G:${current.g} B:${current.b}`,
+                dropsStr: `${redDrops}R / ${greenDrops}G / ${blueDrops}B`,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+
+            savedShelf.unshift(newEntry);
+            saveToLocalStorage();
+            renderSavedShelf();
+        }
+
+        function deleteShelfItem(id) {
+            savedShelf = savedShelf.filter(item => item.id !== id);
+            saveToLocalStorage();
+            renderSavedShelf();
+        }
+
+        function renderSavedShelf() {
+            const list = document.getElementById('savedShelfList');
+            document.getElementById('savedCount').innerText = `${savedShelf.length} Saved`;
+
+            if (savedShelf.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-8 text-slate-600 text-xs">
+                        <i class="fa-solid fa-bookmark text-2xl mb-2 block opacity-40"></i>
+                        No saved colors on your shelf yet.
+                    </div>`;
+                return;
+            }
+
+            list.innerHTML = savedShelf.map(item => `
+                <div class="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 flex items-center justify-between text-xs transition-all hover:border-slate-700">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-6 h-6 rounded-lg border border-white/20 shadow-sm" style="background-color: ${item.hex}"></div>
+                        <div>
+                            <span class="font-bold text-slate-200 block">${item.name}</span>
+                            <span class="font-mono text-[10px] text-indigo-400">${item.hex} (${item.dropsStr})</span>
+                        </div>
+                    </div>
+                    <button onclick="deleteShelfItem(${item.id})" class="text-slate-500 hover:text-rose-400 p-1 transition-colors">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // --- DISCOVERY UNLOCKS ---
+
+        function checkDiscoveryUnlocks() {
+            if (redDrops === 0 && greenDrops === 0 && blueDrops === 0) return;
+
+            rgbDiscoveries.forEach(disc => {
+                // Check exact drop proportion match
+                const matchYellow = disc.id === 'yellow' && redDrops > 0 && redDrops === greenDrops && blueDrops === 0;
+                const matchOrange = disc.id === 'orange' && redDrops > 0 && redDrops === greenDrops * 2 && blueDrops === 0;
+                const matchMagenta = disc.id === 'magenta' && redDrops > 0 && redDrops === blueDrops && greenDrops === 0;
+                const matchCyan = disc.id === 'cyan' && greenDrops > 0 && greenDrops === blueDrops && redDrops === 0;
+                const matchWhite = disc.id === 'white' && redDrops > 0 && redDrops === greenDrops && greenDrops === blueDrops;
+                const matchLime = disc.id === 'lime' && greenDrops > 0 && greenDrops === redDrops * 2 && blueDrops === 0;
+
+                if (matchYellow || matchOrange || matchMagenta || matchCyan || matchWhite || matchLime) {
+                    if (!unlockedDiscoveries.has(disc.id)) {
+                        unlockedDiscoveries.add(disc.id);
+                        saveToLocalStorage();
+                        renderDiscoveries();
+                    }
+                }
+            });
+        }
+
+        function renderDiscoveries() {
+            const list = document.getElementById('discoveryList');
+            document.getElementById('discoveryProgress').innerText = `${unlockedDiscoveries.size} / ${rgbDiscoveries.length}`;
+
+            list.innerHTML = rgbDiscoveries.map(disc => {
+                const isUnlocked = unlockedDiscoveries.has(disc.id);
+                return `
+                    <div class="p-2 rounded-xl border transition-all ${isUnlocked ? 'bg-slate-950/90 border-amber-500/40 shadow-sm' : 'bg-slate-950/30 border-slate-900 opacity-50'}">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3.5 h-3.5 rounded-full border border-white/20" style="background-color: ${isUnlocked ? disc.hex : '#334155'}"></span>
+                                <span class="font-bold text-xs ${isUnlocked ? 'text-slate-100' : 'text-slate-500'}">
+                                    ${isUnlocked ? disc.name : '??? Locked Discovery'}
+                                </span>
+                            </div>
+                            <i class="fa-solid ${isUnlocked ? 'fa-check text-emerald-400' : 'fa-lock text-slate-600'} text-xs"></i>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-0.5">${disc.desc}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- CANVAS WAVE ANIMATION & UI RENDER ---
+
         const canvas = document.getElementById('liquidCanvas');
         const ctx = canvas.getContext('2d');
         let waveOffset = 0;
@@ -609,36 +726,27 @@
 
         window.addEventListener('resize', resizeCanvas);
 
-        // Continuous Wave Fluid Simulation Loop with Splash Ripple Physics
         function animateLiquid() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            const totalVolume = getTotalVolume();
-            if (totalVolume > 0) {
-                const computed = calculateBlendedColor();
-                const fillColor = `rgb(${computed.rgb[0]}, ${computed.rgb[1]}, ${computed.rgb[2]})`;
+            const totalDrops = redDrops + greenDrops + blueDrops;
+            if (totalDrops > 0) {
+                const computed = computeRgbLightColor();
+                const fillColor = `rgb(${computed.r}, ${computed.g}, ${computed.b})`;
 
-                // Calculate liquid fill height percentage based on drops volume (max capped at 40 drops = full)
-                const fillPercent = Math.min(1.0, totalVolume / 40);
-                const liquidHeight = canvas.height * (0.15 + fillPercent * 0.75);
+                // Volume height calculation capped at 40 drops max height
+                const fillPercent = Math.min(1.0, totalDrops / 40);
+                const liquidHeight = canvas.height * (0.12 + fillPercent * 0.8);
                 const fillY = canvas.height - liquidHeight;
 
-                // Draw Fluid Wave Top
+                // Wave Fluid Top
                 ctx.fillStyle = fillColor;
                 ctx.beginPath();
                 ctx.moveTo(0, canvas.height);
 
-                waveOffset += 0.05;
+                waveOffset += 0.06;
                 for (let x = 0; x <= canvas.width; x += 5) {
-                    let splashFactor = 0;
-                    splashRipples.forEach(r => {
-                        const dist = Math.abs(x - r.x);
-                        if (dist < 40) {
-                            splashFactor += Math.sin((dist / 40) * Math.PI) * r.intensity;
-                        }
-                    });
-
-                    const y = fillY + Math.sin(x * 0.03 + waveOffset) * 3 - splashFactor;
+                    const y = fillY + Math.sin(x * 0.04 + waveOffset) * 3;
                     ctx.lineTo(x, y);
                 }
 
@@ -646,22 +754,16 @@
                 ctx.closePath();
                 ctx.fill();
 
-                // Decay Splash Ripples
-                splashRipples.forEach((r, idx) => {
-                    r.intensity *= 0.9;
-                    if (r.intensity < 0.1) splashRipples.splice(idx, 1);
-                });
-
-                // Fluid Highlight sheen overlay
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+                // Glow/Light sheen highlight
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
                 ctx.beginPath();
                 ctx.moveTo(0, fillY);
                 for (let x = 0; x <= canvas.width; x += 5) {
-                    const y = fillY + Math.sin(x * 0.03 + waveOffset) * 3;
+                    const y = fillY + Math.sin(x * 0.04 + waveOffset) * 3;
                     ctx.lineTo(x, y);
                 }
-                ctx.lineTo(canvas.width, fillY + 8);
-                ctx.lineTo(0, fillY + 8);
+                ctx.lineTo(canvas.width, fillY + 6);
+                ctx.lineTo(0, fillY + 6);
                 ctx.closePath();
                 ctx.fill();
             }
@@ -669,360 +771,32 @@
             requestAnimationFrame(animateLiquid);
         }
 
-        // --- CORE COLOR PHYSICS ALGORITHMS ---
+        function updateUI() {
+            const computed = computeRgbLightColor();
 
-        function hexToRgb(hex) {
-            let clean = hex.replace('#', '');
-            if (clean.length === 3) {
-                clean = clean.split('').map(c => c + c).join('');
-            }
-            const num = parseInt(clean, 16);
-            return [ (num >> 16) & 255, (num >> 8) & 255, num & 255 ];
+            // Swatches & Values
+            document.getElementById('resultColorSwatch').style.backgroundColor = computed.hex;
+            document.getElementById('resultColorName').innerText = computed.name;
+            document.getElementById('resultColorHex').innerText = computed.hex;
+            document.getElementById('resultColorHsl').innerText = computed.hsl;
+
+            // Meter Bars & Drop Counters
+            document.getElementById('redBar').style.width = `${(computed.r / 255) * 100}%`;
+            document.getElementById('greenBar').style.width = `${(computed.g / 255) * 100}%`;
+            document.getElementById('blueBar').style.width = `${(computed.b / 255) * 100}%`;
+
+            document.getElementById('redVal').innerText = `${computed.r} (${redDrops}d)`;
+            document.getElementById('greenVal').innerText = `${computed.g} (${greenDrops}d)`;
+            document.getElementById('blueVal').innerText = `${computed.b} (${blueDrops}d)`;
         }
 
-        function rgbToHex(r, g, b) {
-            return '#' + [r, g, b].map(x => {
-                const hex = Math.round(x).toString(16);
-                return hex.length === 1 ? '0' + hex : hex;
-            }).join('').toUpperCase();
-        }
-
-        // Calculate blended color based on active mode
-        function calculateBlendedColor() {
-            if (currentDrops.length === 0) {
-                return { rgb: [255, 255, 255], hex: '#FFFFFF', name: 'Clear Water' };
-            }
-
-            let finalR = 0, finalG = 0, finalB = 0;
-
-            if (currentPhysicsMode === 'additive') {
-                // STRICT ADDITIVE (RGB Light) MODE:
-                // Sum light channels according to drop ratios for true color light physics!
-                let sumR = 0, sumG = 0, sumB = 0;
-                currentDrops.forEach(drop => {
-                    sumR += drop.rgb[0] * drop.amount;
-                    sumG += drop.rgb[1] * drop.amount;
-                    sumB += drop.rgb[2] * drop.amount;
-                });
-
-                const maxChannel = Math.max(sumR, sumG, sumB, 1);
-                
-                // If Red and Green are present in 1:1, max out R and G to produce strictly Pure Yellow [255, 255, 0]
-                finalR = Math.min(255, (sumR / maxChannel) * 255);
-                finalG = Math.min(255, (sumG / maxChannel) * 255);
-                finalB = Math.min(255, (sumB / maxChannel) * 255);
-
-            } else {
-                // SUBTRACTIVE (RYB / Pigment Dyes) MODE
-                const totalVolume = getTotalVolume();
-                let weightedR = 0, weightedG = 0, weightedB = 0;
-                
-                currentDrops.forEach(drop => {
-                    const weight = drop.amount / totalVolume;
-                    weightedR += drop.rgb[0] * weight;
-                    weightedG += drop.rgb[1] * weight;
-                    weightedB += drop.rgb[2] * weight;
-                });
-
-                // Pigment Absorption darkening factor for multiple mixed colors
-                const colorVarietyCount = currentDrops.length;
-                let darkenFactor = 1.0;
-                if (colorVarietyCount > 1) {
-                    darkenFactor = Math.max(0.35, 1.0 - (colorVarietyCount * 0.08));
-                }
-
-                finalR = weightedR * darkenFactor;
-                finalG = weightedG * darkenFactor;
-                finalB = weightedB * darkenFactor;
-            }
-
-            const finalRgb = [Math.round(finalR), Math.round(finalG), Math.round(finalB)];
-            const hex = rgbToHex(finalRgb[0], finalRgb[1], finalRgb[2]);
-            const name = matchClosestColorName(finalRgb);
-
-            return { rgb: finalRgb, hex, name };
-        }
-
-        function matchClosestColorName(rgb) {
-            let closestName = "Custom Mix";
-            let minDistance = Infinity;
-
-            colorNamesDB.forEach(item => {
-                const dist = Math.sqrt(
-                    Math.pow(rgb[0] - item.rgb[0], 2) +
-                    Math.pow(rgb[1] - item.rgb[1], 2) +
-                    Math.pow(rgb[2] - item.rgb[2], 2)
-                );
-                if (dist < minDistance) {
-                    minDistance = dist;
-                    closestName = item.name;
-                }
-            });
-
-            return closestName;
-        }
-
-        function getTotalVolume() {
-            return currentDrops.reduce((sum, drop) => sum + drop.amount, 0);
-        }
-
-        // --- INTERACTION HANDLING ---
-
-        function addLiquidDrop(colorHex, colorName) {
-            const volSelect = document.getElementById('dripVolumeSelect');
-            const volume = parseInt(volSelect.value) || 1;
-
-            playDropSound();
-            spawnDropAnimation(colorHex);
-
-            // Add splash ripple physics on liquid surface
-            splashRipples.push({
-                x: canvas.width / 2,
-                intensity: 12 * volume
-            });
-
-            // Push drop to recipe sequence history
-            currentDrops.push({
-                colorHex,
-                colorName,
-                amount: volume,
-                rgb: hexToRgb(colorHex)
-            });
-
-            updateLabUI();
-            checkCookbookUnlocks();
-            if (currentMainTab === 'challenge') updateChallengeProgress();
-        }
-
-        function addCustomLiquidDrop() {
-            const picker = document.getElementById('customColorPicker');
-            addLiquidDrop(picker.value, 'Custom Pigment');
-        }
-
-        function spawnDropAnimation(colorHex) {
-            const spout = document.getElementById('dropSpout');
-            const drop = document.createElement('div');
-            drop.className = 'animated-drop';
-            drop.style.backgroundColor = colorHex;
-            drop.style.left = `calc(50% - 8px)`;
-            spout.appendChild(drop);
-
-            setTimeout(() => {
-                if (drop.parentNode) drop.parentNode.removeChild(drop);
-            }, 550);
-        }
-
-        function clearFlask() {
-            playClearSound();
-            currentDrops = [];
-            updateLabUI();
-            if (currentMainTab === 'challenge') updateChallengeProgress();
-        }
-
-        function runPresetSequence(sequenceArray) {
-            clearFlask();
-            sequenceArray.forEach((color, idx) => {
-                setTimeout(() => {
-                    const presetMap = {
-                        'Red': '#FF0000',
-                        'Green': '#00FF00',
-                        'Blue': '#0000FF',
-                        'Yellow': '#FFFF00',
-                        'White': '#FFFFFF',
-                        'Black': '#000000'
-                    };
-                    if (presetMap[color]) {
-                        addLiquidDrop(presetMap[color], color);
-                    }
-                }, idx * 280);
-            });
-        }
-
-        // Switch Physics Engine Mode
-        function setPhysicsMode(mode) {
-            currentPhysicsMode = mode;
-            const addBtn = document.getElementById('physicsAdditiveBtn');
-            const subBtn = document.getElementById('physicsSubtractiveBtn');
-            const desc = document.getElementById('physicsDescription');
-
-            if (mode === 'additive') {
-                addBtn.className = "py-2.5 px-3 rounded-lg text-xs font-black flex flex-col items-center justify-center gap-1 transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-2 ring-amber-400";
-                subBtn.className = "py-2.5 px-3 rounded-lg text-xs font-semibold flex flex-col items-center justify-center gap-1 transition-all text-slate-400 hover:text-white";
-                desc.innerHTML = '<b class="text-amber-300"><i class="fa-solid fa-bolt mr-1"></i>Additive Light Mode Active:</b> Combining Red + Green strictly produces <b>Vivid Yellow</b>! Adding more Red (2 Red + 1 Green) creates <b>Orange</b>.';
-            } else {
-                subBtn.className = "py-2.5 px-3 rounded-lg text-xs font-black flex flex-col items-center justify-center gap-1 transition-all bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-purple-500/25 ring-2 ring-purple-400";
-                addBtn.className = "py-2.5 px-3 rounded-lg text-xs font-semibold flex flex-col items-center justify-center gap-1 transition-all text-slate-400 hover:text-white";
-                desc.innerHTML = '<b class="text-indigo-300"><i class="fa-solid fa-palette mr-1"></i>Paint Pigment Mode Active:</b> Colors combine like real paint. Red + Green = Earthy Olive/Brown. Yellow requires Yellow pigment or Blue + Yellow.';
-            }
-
-            updateLabUI();
-            checkCookbookUnlocks();
-        }
-
-        function changeVesselType(type) {
-            currentVessel = type;
-            const vessel = document.getElementById('vesselGraphic');
-            if (type === 'flask') {
-                vessel.className = "relative w-56 h-64 flask-glass rounded-b-full rounded-t-3xl overflow-hidden flex flex-col justify-end transition-all duration-300";
-            } else if (type === 'beaker') {
-                vessel.className = "relative w-56 h-64 flask-glass rounded-b-xl rounded-t-sm overflow-hidden flex flex-col justify-end transition-all duration-300";
-            } else if (type === 'bowl') {
-                vessel.className = "relative w-64 h-44 flask-glass rounded-b-full rounded-t-none overflow-hidden flex flex-col justify-end transition-all duration-300";
-            }
-        }
-
-        // --- UPDATE UI DASHBOARD ---
-        function updateLabUI() {
-            const blended = calculateBlendedColor();
-            const totalVol = getTotalVolume();
-
-            // Swatch & Titles
-            document.getElementById('resultColorSwatch').style.backgroundColor = blended.hex;
-            document.getElementById('resultColorName').innerText = blended.name;
-            document.getElementById('resultColorHex').innerText = `${blended.hex} (RGB: ${blended.rgb.join(', ')})`;
-            document.getElementById('volumeCounter').innerText = `${totalVol} Drops`;
-
-            // RGB Bar Meters
-            document.getElementById('redBar').style.width = `${(blended.rgb[0] / 255) * 100}%`;
-            document.getElementById('greenBar').style.width = `${(blended.rgb[1] / 255) * 100}%`;
-            document.getElementById('blueBar').style.width = `${(blended.rgb[2] / 255) * 100}%`;
-
-            document.getElementById('redVal').innerText = blended.rgb[0];
-            document.getElementById('greenVal').innerText = blended.rgb[1];
-            document.getElementById('blueVal').innerText = blended.rgb[2];
-
-            // Render Ingredients Log Step-by-Step History
-            const logContainer = document.getElementById('ingredientLog');
-            if (currentDrops.length === 0) {
-                logContainer.innerHTML = `
-                    <div class="text-center py-8 text-slate-500 text-xs">
-                        <i class="fa-solid fa-flask-glass text-2xl mb-2 block opacity-40"></i>
-                        No drops added yet. Select a color drop from the palette!
-                    </div>`;
-            } else {
-                logContainer.innerHTML = currentDrops.map((drop, idx) => `
-                    <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-slate-700/50 text-xs animate-fade-in">
-                        <div class="flex items-center gap-2.5">
-                            <span class="text-[10px] font-mono text-slate-500 w-4">#${idx + 1}</span>
-                            <span class="w-4 h-4 rounded-full border border-white/20 shadow-sm" style="background-color: ${drop.colorHex}"></span>
-                            <span class="font-bold text-slate-200">${drop.colorName}</span>
-                        </div>
-                        <span class="font-mono text-indigo-400 font-bold bg-slate-800 px-2 py-0.5 rounded-md">${drop.amount} drop(s)</span>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // --- COOKBOOK UNLOCK ENGINE ---
-        function renderCookbook() {
-            const list = document.getElementById('cookbookList');
-            document.getElementById('cookbookProgress').innerText = `${unlockedRecipes.size} / ${cookbookRecipes.length} Unlocked`;
-            document.getElementById('unlockedBadge').innerText = unlockedRecipes.size;
-
-            list.innerHTML = cookbookRecipes.map(recipe => {
-                const isUnlocked = unlockedRecipes.has(recipe.id);
-                return `
-                    <div class="p-2.5 rounded-xl border transition-all ${isUnlocked ? 'bg-slate-900/90 border-emerald-500/40 shadow-sm' : 'bg-slate-900/40 border-slate-800 opacity-60'}">
-                        <div class="flex items-center justify-between mb-1">
-                            <div class="flex items-center gap-2">
-                                <span class="w-3.5 h-3.5 rounded-full border border-white/20" style="background-color: ${isUnlocked ? recipe.hex : '#475569'}"></span>
-                                <span class="font-bold text-xs ${isUnlocked ? 'text-slate-100' : 'text-slate-500'}">
-                                    ${isUnlocked ? recipe.name : '??? Locked Recipe'}
-                                </span>
-                            </div>
-                            <span class="text-[9px] font-mono px-1.5 py-0.5 rounded ${recipe.mode === 'additive' ? 'bg-amber-500/20 text-amber-300' : 'bg-indigo-500/20 text-indigo-300'}">
-                                ${recipe.mode === 'additive' ? 'RGB Light' : 'RYB Paint'}
-                            </span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 leading-tight">
-                            ${isUnlocked ? recipe.desc : `Combine ${recipe.combo.join(' + ')} in ${recipe.mode} mode to unlock.`}
-                        </p>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function checkCookbookUnlocks() {
-            const currentNames = currentDrops.map(d => d.colorName);
-
-            cookbookRecipes.forEach(recipe => {
-                if (recipe.mode === currentPhysicsMode) {
-                    const matchCombo = recipe.combo.every(c => currentNames.includes(c));
-                    if (matchCombo && !unlockedRecipes.has(recipe.id)) {
-                        unlockedRecipes.add(recipe.id);
-                        renderCookbook();
-                    }
-                }
-            });
-        }
-
-        // --- CHALLENGE MODE LOGIC ---
-        function updateChallengeProgress() {
-            const current = calculateBlendedColor();
-            const target = challengeTarget;
-
-            const dist = Math.sqrt(
-                Math.pow(current.rgb[0] - target.rgb[0], 2) +
-                Math.pow(current.rgb[1] - target.rgb[1], 2) +
-                Math.pow(current.rgb[2] - target.rgb[2], 2)
-            );
-
-            let matchPercent = Math.max(0, Math.round(100 - (dist / 441.67) * 100));
-            if (currentDrops.length === 0) matchPercent = 0;
-
-            document.getElementById('currentMatchSwatch').style.backgroundColor = current.hex;
-            document.getElementById('matchPercentage').innerText = `${matchPercent}% Match`;
-            document.getElementById('matchMeterBar').style.width = `${matchPercent}%`;
-        }
-
-        function nextChallenge() {
-            challengeIndex = (challengeIndex + 1) % challengeList.length;
-            challengeTarget = challengeList[challengeIndex];
-
-            document.getElementById('targetColorName').innerText = `Target: ${challengeTarget.name}`;
-            document.getElementById('targetColorSwatch').style.backgroundColor = challengeTarget.hex;
-
-            clearFlask();
-        }
-
-        let currentMainTab = 'sandbox';
-
-        function switchMainTab(tab) {
-            currentMainTab = tab;
-            const sandboxBtn = document.getElementById('modeSandboxBtn');
-            const challengeBtn = document.getElementById('modeChallengeBtn');
-            const cookbookBtn = document.getElementById('modeCookbookBtn');
-
-            const challengeLabView = document.getElementById('challengeLabView');
-
-            [sandboxBtn, challengeBtn, cookbookBtn].forEach(b => {
-                b.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-200 relative";
-            });
-
-            if (tab === 'sandbox') {
-                sandboxBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 bg-indigo-600 text-white shadow-md";
-                challengeLabView.classList.add('hidden');
-                challengeLabView.classList.remove('flex');
-            } else if (tab === 'challenge') {
-                challengeBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 bg-indigo-600 text-white shadow-md";
-                challengeLabView.classList.remove('hidden');
-                challengeLabView.classList.add('flex');
-                updateChallengeProgress();
-            } else if (tab === 'cookbook') {
-                cookbookBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 bg-indigo-600 text-white shadow-md";
-                document.getElementById('cookbookPanel').scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        function togglePhysicsInfoModal() {
-            const modal = document.getElementById('physicsModal');
-            modal.classList.toggle('hidden');
-        }
-
+        // --- APP BOOTSTRAP ---
         window.onload = function() {
             resizeCanvas();
-            renderCookbook();
-            updateLabUI();
+            loadFromLocalStorage();
+            updateUI();
+            renderSavedShelf();
+            renderDiscoveries();
             animateLiquid();
         };
     </script>
