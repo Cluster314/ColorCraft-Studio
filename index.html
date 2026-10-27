@@ -143,33 +143,42 @@
                     </div>
                 </div>
 
-                <!-- Primary RGB Wells (Red, Green, Blue ONLY) -->
-                <div class="grid grid-cols-3 gap-2.5">
+                <!-- Primary RGB + Black Wells (Red, Green, Blue, Black) -->
+                <div class="grid grid-cols-4 gap-2">
                     <!-- Red Tube -->
-                    <button onclick="addRgbDrop('red')" class="group relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-950/80 border border-red-500/40 hover:border-red-500 hover:bg-red-500/10 active:scale-95 transition-all shadow-md">
-                        <div class="w-10 h-10 rounded-full bg-red-600 paint-blob border-2 border-red-400 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
-                            <i class="fa-solid fa-droplet text-xs"></i>
+                    <button onclick="addRgbDrop('red')" class="group relative flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-950/80 border border-red-500/40 hover:border-red-500 hover:bg-red-500/10 active:scale-95 transition-all shadow-md">
+                        <div class="w-8 h-8 rounded-full bg-red-600 paint-blob border-2 border-red-400 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
+                            <i class="fa-solid fa-droplet text-[10px]"></i>
                         </div>
-                        <span class="text-xs font-extrabold text-red-400 mt-2">RED</span>
-                        <span class="text-[10px] font-mono text-slate-500">+Red Drop</span>
+                        <span class="text-[11px] font-extrabold text-red-400 mt-1.5">RED</span>
+                        <span class="text-[9px] font-mono text-slate-500">+Red</span>
                     </button>
 
                     <!-- Green Tube -->
-                    <button onclick="addRgbDrop('green')" class="group relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-950/80 border border-emerald-500/40 hover:border-emerald-500 hover:bg-emerald-500/10 active:scale-95 transition-all shadow-md">
-                        <div class="w-10 h-10 rounded-full bg-emerald-500 paint-blob border-2 border-emerald-300 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
-                            <i class="fa-solid fa-droplet text-xs"></i>
+                    <button onclick="addRgbDrop('green')" class="group relative flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-950/80 border border-emerald-500/40 hover:border-emerald-500 hover:bg-emerald-500/10 active:scale-95 transition-all shadow-md">
+                        <div class="w-8 h-8 rounded-full bg-emerald-500 paint-blob border-2 border-emerald-300 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
+                            <i class="fa-solid fa-droplet text-[10px]"></i>
                         </div>
-                        <span class="text-xs font-extrabold text-emerald-400 mt-2">GREEN</span>
-                        <span class="text-[10px] font-mono text-slate-500">+Green Drop</span>
+                        <span class="text-[11px] font-extrabold text-emerald-400 mt-1.5">GREEN</span>
+                        <span class="text-[9px] font-mono text-slate-500">+Green</span>
                     </button>
 
                     <!-- Blue Tube -->
-                    <button onclick="addRgbDrop('blue')" class="group relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-950/80 border border-blue-500/40 hover:border-blue-500 hover:bg-blue-500/10 active:scale-95 transition-all shadow-md">
-                        <div class="w-10 h-10 rounded-full bg-blue-600 paint-blob border-2 border-blue-400 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
-                            <i class="fa-solid fa-droplet text-xs"></i>
+                    <button onclick="addRgbDrop('blue')" class="group relative flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-950/80 border border-blue-500/40 hover:border-blue-500 hover:bg-blue-500/10 active:scale-95 transition-all shadow-md">
+                        <div class="w-8 h-8 rounded-full bg-blue-600 paint-blob border-2 border-blue-400 group-hover:scale-110 transition-transform flex items-center justify-center text-white">
+                            <i class="fa-solid fa-droplet text-[10px]"></i>
                         </div>
-                        <span class="text-xs font-extrabold text-blue-400 mt-2">BLUE</span>
-                        <span class="text-[10px] font-mono text-slate-500">+Blue Drop</span>
+                        <span class="text-[11px] font-extrabold text-blue-400 mt-1.5">BLUE</span>
+                        <span class="text-[9px] font-mono text-slate-500">+Blue</span>
+                    </button>
+
+                    <!-- Black Tube -->
+                    <button onclick="addRgbDrop('black')" class="group relative flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-950/80 border border-slate-700 hover:border-slate-400 hover:bg-slate-800/50 active:scale-95 transition-all shadow-md">
+                        <div class="w-8 h-8 rounded-full bg-slate-950 paint-blob border-2 border-slate-600 group-hover:scale-110 transition-transform flex items-center justify-center text-slate-300">
+                            <i class="fa-solid fa-droplet text-[10px]"></i>
+                        </div>
+                        <span class="text-[11px] font-extrabold text-slate-300 mt-1.5">BLACK</span>
+                        <span class="text-[9px] font-mono text-slate-500">+Shade</span>
                     </button>
                 </div>
 
@@ -227,6 +236,13 @@
                             </div>
                             <span id="blueVal" class="w-10 text-right text-slate-400">0d</span>
                         </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 text-slate-300 font-bold">K</span>
+                            <div class="flex-1 bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <div id="blackBar" class="bg-slate-500 h-full w-0 transition-all duration-300"></div>
+                            </div>
+                            <span id="blackVal" class="w-10 text-right text-slate-400">0d</span>
+                        </div>
                     </div>
 
                     <!-- Add Color to Paint Tray Button -->
@@ -241,21 +257,21 @@
                         <i class="fa-solid fa-wand-magic-sparkles text-amber-400 mr-1"></i> RGB Mixing Recipes
                     </h3>
                     <div class="grid grid-cols-2 gap-1.5 text-xs">
-                        <button onclick="applyPresetRatio(1, 1, 0)" class="p-1.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-left transition-all">
+                        <button onclick="applyPresetRatio(1, 1, 0, 0)" class="p-1.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-left transition-all">
                             <span class="font-bold text-amber-300 block text-[11px]">1 Red + 1 Green</span>
                             <span class="text-[9px] text-slate-400">Pure Yellow</span>
                         </button>
-                        <button onclick="applyPresetRatio(2, 1, 0)" class="p-1.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-left transition-all">
+                        <button onclick="applyPresetRatio(2, 1, 0, 0)" class="p-1.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-left transition-all">
                             <span class="font-bold text-orange-400 block text-[11px]">2 Red + 1 Green</span>
                             <span class="text-[9px] text-slate-400">Flame Orange</span>
                         </button>
-                        <button onclick="applyPresetRatio(1, 0, 1)" class="p-1.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-left transition-all">
-                            <span class="font-bold text-fuchsia-400 block text-[11px]">1 Red + 1 Blue</span>
-                            <span class="text-[9px] text-slate-400">Hot Magenta</span>
+                        <button onclick="applyPresetRatio(1, 1, 0, 2)" class="p-1.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-left transition-all">
+                            <span class="font-bold text-amber-600 block text-[11px]">Yellow + 2 Black</span>
+                            <span class="text-[9px] text-slate-400">Dark Olive / Gold</span>
                         </button>
-                        <button onclick="applyPresetRatio(1, 1, 1)" class="p-1.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-left transition-all">
-                            <span class="font-bold text-slate-100 block text-[11px]">1 Red + 1 Green + 1 Blue</span>
-                            <span class="text-[9px] text-slate-400">Solar White</span>
+                        <button onclick="applyPresetRatio(1, 0, 0, 2)" class="p-1.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-left transition-all">
+                            <span class="font-bold text-red-700 block text-[11px]">1 Red + 2 Black</span>
+                            <span class="text-[9px] text-slate-400">Dark Crimson</span>
                         </button>
                     </div>
                 </div>
@@ -402,13 +418,15 @@
         let redDrops = 0;
         let greenDrops = 0;
         let blueDrops = 0;
+        let blackDrops = 0;
         let soundEnabled = true;
 
         // --- PAINT TRAY STATE ---
         let paintTray = [
             { id: 1, name: 'Pure Red', hex: '#FF0000', r: 255, g: 0, b: 0 },
             { id: 2, name: 'Pure Green', hex: '#00FF00', r: 0, g: 255, b: 0 },
-            { id: 3, name: 'Pure Blue', hex: '#0000FF', r: 0, g: 0, b: 255 }
+            { id: 3, name: 'Pure Blue', hex: '#0000FF', r: 0, g: 0, b: 255 },
+            { id: 4, name: 'Pure Black', hex: '#000000', r: 0, g: 0, b: 0 }
         ];
         let activePaintColor = paintTray[0];
 
@@ -425,7 +443,13 @@
 
         // Color Names DB
         const colorNamesDB = [
-            { name: "Darkness", rgb: [0, 0, 0] },
+            { name: "Obsidian Black", rgb: [0, 0, 0] },
+            { name: "Charcoal Gray", rgb: [60, 60, 60] },
+            { name: "Dark Crimson", rgb: [100, 0, 0] },
+            { name: "Forest Green", rgb: [0, 100, 0] },
+            { name: "Navy Blue", rgb: [0, 0, 100] },
+            { name: "Dark Olive", rgb: [100, 100, 0] },
+            { name: "Golden Brown", rgb: [130, 80, 20] },
             { name: "Pure Red", rgb: [255, 0, 0] },
             { name: "Pure Green", rgb: [0, 255, 0] },
             { name: "Pure Blue", rgb: [0, 0, 255] },
@@ -433,13 +457,7 @@
             { name: "Flame Orange", rgb: [255, 127, 0] },
             { name: "Electric Cyan", rgb: [0, 255, 255] },
             { name: "Hot Magenta", rgb: [255, 0, 255] },
-            { name: "Solar White", rgb: [255, 255, 255] },
-            { name: "Bright Lime", rgb: [127, 255, 0] },
-            { name: "Spring Green", rgb: [0, 255, 127] },
-            { name: "Deep Violet", rgb: [127, 0, 255] },
-            { name: "Hot Pink", rgb: [255, 0, 127] },
-            { name: "Sky Blue", rgb: [0, 127, 255] },
-            { name: "Warm Amber", rgb: [255, 191, 0] }
+            { name: "Solar White", rgb: [255, 255, 255] }
         ];
 
         // --- WEB AUDIO API SYNTHESIZER ---
@@ -457,13 +475,13 @@
                 initAudio();
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                const freqMap = { 'red': 360, 'green': 540, 'blue': 720 };
+                const freqMap = { 'red': 360, 'green': 540, 'blue': 720, 'black': 150 };
                 const baseFreq = freqMap[type] || 480;
 
-                osc.type = 'sine';
+                osc.type = type === 'black' ? 'sawtooth' : 'sine';
                 osc.frequency.setValueAtTime(baseFreq, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.4, audioCtx.currentTime + 0.08);
-                osc.frequency.exponentialRampToValueAtTime(140, audioCtx.currentTime + 0.16);
+                osc.frequency.exponentialRampToValueAtTime(90, audioCtx.currentTime + 0.16);
 
                 gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.16);
@@ -528,6 +546,7 @@
                     redDrops = parsed.redDrops || 0;
                     greenDrops = parsed.greenDrops || 0;
                     blueDrops = parsed.blueDrops || 0;
+                    blackDrops = parsed.blackDrops || 0;
                 }
             } catch (e) {}
 
@@ -548,7 +567,7 @@
         }
 
         function saveToLocalStorage() {
-            localStorage.setItem(STORAGE_WELL_KEY, JSON.stringify({ redDrops, greenDrops, blueDrops }));
+            localStorage.setItem(STORAGE_WELL_KEY, JSON.stringify({ redDrops, greenDrops, blueDrops, blackDrops }));
             localStorage.setItem(STORAGE_TRAY_KEY, JSON.stringify(paintTray));
             localStorage.setItem(STORAGE_GALLERY_KEY, JSON.stringify(savedGallery));
             
@@ -565,10 +584,12 @@
                 redDrops = 0;
                 greenDrops = 0;
                 blueDrops = 0;
+                blackDrops = 0;
                 paintTray = [
                     { id: 1, name: 'Pure Red', hex: '#FF0000', r: 255, g: 0, b: 0 },
                     { id: 2, name: 'Pure Green', hex: '#00FF00', r: 0, g: 255, b: 0 },
-                    { id: 3, name: 'Pure Blue', hex: '#0000FF', r: 0, g: 0, b: 255 }
+                    { id: 3, name: 'Pure Blue', hex: '#0000FF', r: 0, g: 0, b: 255 },
+                    { id: 4, name: 'Pure Black', hex: '#000000', r: 0, g: 0, b: 0 }
                 ];
                 activePaintColor = paintTray[0];
                 savedGallery = [];
@@ -582,18 +603,30 @@
             }
         }
 
-        // --- RGB ADDITIVE MIXING ENGINE ---
+        // --- RGB + BLACK SHADING MIXING ENGINE ---
 
         function computeRgbLightColor() {
-            const totalDrops = redDrops + greenDrops + blueDrops;
+            const totalColorDrops = redDrops + greenDrops + blueDrops;
+            const totalDrops = totalColorDrops + blackDrops;
+
             if (totalDrops === 0) {
-                return { r: 0, g: 0, b: 0, hex: '#000000', name: 'Darkness' };
+                return { r: 0, g: 0, b: 0, hex: '#000000', name: 'Obsidian Black' };
             }
 
-            const maxDrops = Math.max(redDrops, greenDrops, blueDrops);
-            const r = Math.round((redDrops / maxDrops) * 255);
-            const g = Math.round((greenDrops / maxDrops) * 255);
-            const b = Math.round((blueDrops / maxDrops) * 255);
+            let r = 0, g = 0, b = 0;
+
+            if (totalColorDrops > 0) {
+                const maxColorDrops = Math.max(redDrops, greenDrops, blueDrops);
+                r = Math.round((redDrops / maxColorDrops) * 255);
+                g = Math.round((greenDrops / maxColorDrops) * 255);
+                b = Math.round((blueDrops / maxColorDrops) * 255);
+            }
+
+            // Apply Black Shading multiplier based on Black ratio
+            const shadeFactor = Math.pow(0.5, blackDrops);
+            r = Math.round(r * shadeFactor);
+            g = Math.round(g * shadeFactor);
+            b = Math.round(b * shadeFactor);
 
             const hex = rgbToHex(r, g, b);
             const name = findClosestColorName(r, g, b);
@@ -632,29 +665,31 @@
             if (color === 'red') redDrops += count;
             if (color === 'green') greenDrops += count;
             if (color === 'blue') blueDrops += count;
+            if (color === 'black') blackDrops += count;
 
             playDropSound(color);
             saveToLocalStorage();
             updateUI();
         }
 
-        function applyPresetRatio(r, g, b) {
+        function applyPresetRatio(r, g, b, k = 0) {
             redDrops = r;
             greenDrops = g;
             blueDrops = b;
+            blackDrops = k;
             playSwirlSound();
             saveToLocalStorage();
             updateUI();
         }
 
         function cleanPalette() {
-            redDrops = 0; greenDrops = 0; blueDrops = 0;
+            redDrops = 0; greenDrops = 0; blueDrops = 0; blackDrops = 0;
             saveToLocalStorage();
             updateUI();
         }
 
         function swirlPalette() {
-            if (redDrops === 0 && greenDrops === 0 && blueDrops === 0) return;
+            if (redDrops === 0 && greenDrops === 0 && blueDrops === 0 && blackDrops === 0) return;
             playSwirlSound();
             const overlay = document.getElementById('swirlOverlay');
             const ring = document.createElement('div');
@@ -675,7 +710,7 @@
 
             pCtx.clearRect(0, 0, paletteCanvas.width, paletteCanvas.height);
 
-            const totalDrops = redDrops + greenDrops + blueDrops;
+            const totalDrops = redDrops + greenDrops + blueDrops + blackDrops;
             if (totalDrops > 0) {
                 const computed = computeRgbLightColor();
                 const gradient = pCtx.createRadialGradient(
@@ -695,7 +730,7 @@
 
         function saveColorToPaintTray() {
             const current = computeRgbLightColor();
-            if (redDrops === 0 && greenDrops === 0 && blueDrops === 0) return;
+            if (redDrops === 0 && greenDrops === 0 && blueDrops === 0 && blackDrops === 0) return;
 
             // Avoid duplicate hex entries
             if (!paintTray.some(p => p.hex === current.hex)) {
@@ -1081,14 +1116,16 @@
             document.getElementById('resultColorName').innerText = computed.name;
             document.getElementById('resultColorHex').innerText = computed.hex;
 
-            const max = Math.max(redDrops, greenDrops, blueDrops, 1);
+            const max = Math.max(redDrops, greenDrops, blueDrops, blackDrops, 1);
             document.getElementById('redBar').style.width = `${(redDrops / max) * 100}%`;
             document.getElementById('greenBar').style.width = `${(greenDrops / max) * 100}%`;
             document.getElementById('blueBar').style.width = `${(blueDrops / max) * 100}%`;
+            document.getElementById('blackBar').style.width = `${(blackDrops / max) * 100}%`;
 
             document.getElementById('redVal').innerText = `${redDrops}d`;
             document.getElementById('greenVal').innerText = `${greenDrops}d`;
             document.getElementById('blueVal').innerText = `${blueDrops}d`;
+            document.getElementById('blackVal').innerText = `${blackDrops}d`;
 
             drawPaletteCanvas();
         }
